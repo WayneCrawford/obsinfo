@@ -132,8 +132,10 @@ def __lc2ms_commands(
 
     network_code = station.network_code
     station_code = station.code
-    obs_type = station.instrument.reference_code.split("_")[0]
-    obs_SN = station.instrument.serial_number
+    obs_type = station.instruments[0].reference_code.split("_")[0]
+    obs_SN = station.instruments[0].serial_number
+    if len(station.instruments) > 0:
+        NameError('LCHEAPO.py cannot yet handle more than 1 instrument/station')
     # CHANNEL CORRESPONDENCES WILL ALLOW THE CHANNEL NAMES TO BE EXPRESSED ON
     # THE COMMAND LINE, WITHOUT USING A DEDICATED CSV FILE
     # channel_corresp = station.instrument.channel_correspondances()

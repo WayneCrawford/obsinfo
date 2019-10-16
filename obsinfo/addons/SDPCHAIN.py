@@ -63,13 +63,19 @@ def process_script(
     if extra_commands:
         s += __extra_command_steps(extra_commands)
     s += __ms2sds_script(station, input_dir, SDS_uncorr_dir)
-    t = __leap_second_script(
-        station.clock_corrections.get("leapseconds", None), input_dir, leap_corr_dir
-    )
-    if t:
-        s += t
-        input_dir = leap_corr_dir
-    s += __msdrift_script(input_dir, corrected_dir, station.clock_corrections)
+    clock_corrected=False
+    for process in station.processing:
+        if "clock_corrections" in process:
+            if clock_corrected:
+                # Already clock corrected, can't handle >1 for now
+                NameError("CAN'T YET HANDLE MORE THAN ONE CLOCK CORRECTION")
+            if "leapseconds" in process["clock_corrections"]:
+                t = __leap_second_script(process['clock_corrections']["leapseconds"],
+                                         input_dir, leap_corr_dir)
+                s += t
+                input_dir = leap_corr_dir
+            s += __msdrift_script(input_dir, corrected_dir, process['clock_corrections'])
+            clock_corrected=True
     s += __force_quality_script(corrected_dir, "Q")
     s += __ms2sds_script(station, corrected_dir, SDS_corr_dir)
     s += __combine_sds_script(station, SDS_corr_dir, SDS_uncorr_dir, SDS_combined_dir)
