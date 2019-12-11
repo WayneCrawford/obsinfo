@@ -1,0 +1,179 @@
+---
+format_version: "0.106"
+notes:
+    - "All instruments and configurations of the INSU-IPGP OBS park"
+yaml_anchors:
+    location_defaults: &LOC_DEFAULTS
+        depth.m: 0
+        geology: "unknown"
+        vault: "Sea floor"                    
+        uncertainties.m: {lon: 200, lat: 200, elev: 20}
+        position: {lon: 45, lat: 45, elev: 0}
+        localisation_method: "None"
+    station_defaults: &STATION_DEFAULTS
+        start_date: "2015-01-01T00:00:00Z"
+        end_date: "2016-01-01T00:00:00Z"
+        station_location: "00"
+        locations:
+            "00":
+                <<: *LOC_DEFAULTS
+            "01":
+                <<: *LOC_DEFAULTS
+revision:
+    authors:
+        -
+            first_name : "Wayne"
+            last_name : "Crawford"
+            email: "crawford@ipgp.fr"
+    date: "2019-12-11"
+network:
+    facility:
+        reference_name: "INSU-IPGP"
+        full_name: "INSU-IPGP OBS Park"
+    campaign_reference_name: "INSTS"
+    general_information:
+        code: "XX"
+        start_date: "2007-07-01"
+        end_date: "2025-12-31"
+        description: "Fake network"
+    instrumentation:
+        $ref: "../instrumentation/instrumentation.yaml"
+    stations:
+        "SP1_1":
+            <<: *STATION_DEFAULTS
+            site: "SPOBS1 (2 channels)"
+            instruments:
+                -
+                    reference_code: "SPOBS_1_1"
+                    channel_codes_locations:
+                        "BDH_00": {datalogger_config: "62.5sps"}
+                        "SH3_00": {datalogger_config: "62.5sps"}
+                        "HDH_00": {datalogger_config: "125sps"}
+                        "EH3_00": {datalogger_config: "125sps"}
+                        "CDH_00": {datalogger_config: "250sps"}
+                        "DH3_00": {datalogger_config: "250sps"}
+        "SP2_1":
+            <<: *STATION_DEFAULTS
+            site: "SPOBS2 (4 channels)"
+            instruments:
+                -
+                    reference_code: "SPOBS_2_1"
+                    channel_codes_locations:
+                        "BDH_00": {datalogger_config: "62.5sps"}
+                        "SH3_00": {datalogger_config: "62.5sps"}
+                        "SH1_00": {datalogger_config: "62.5sps"}
+                        "SH2_00": {datalogger_config: "62.5sps"}
+                        "HDH_00": {datalogger_config: "125sps"}
+                        "EH3_00": {datalogger_config: "125sps"}
+                        "EH1_00": {datalogger_config: "125sps"}
+                        "EH2_00": {datalogger_config: "125sps"}
+                        "CDH_00": {datalogger_config: "250sps"}
+                        "DH3_00": {datalogger_config: "250sps"}
+                        "DH1_00": {datalogger_config: "250sps"}
+                        "DH2_00": {datalogger_config: "250sps"}
+                        "CDH_01": {datalogger_config: "500sps"}
+                        "DH3_01": {datalogger_config: "500sps"}
+                        "DH1_01": {datalogger_config: "500sps"}
+                        "DH2_01": {datalogger_config: "500sps"}
+                        "FDH_00": {datalogger_config: "1000sps"}
+                        "GH3_00": {datalogger_config: "1000sps"}
+                        "GH1_00": {datalogger_config: "1000sps"}
+                        "GH2_00": {datalogger_config: "1000sps"}
+        "BB1_1":
+            <<: *STATION_DEFAULTS
+            site: "BBOBS1 config 1 (0.225 gain all channels)"
+            instruments:
+                -
+                    reference_code: "BBOBS_1_1"
+                    channel_codes_locations:
+                        "BDH_00": {datalogger_config: "62.5sps"}
+                        "BHZ_00": {datalogger_config: "62.5sps"}
+                        "BH1_00": {datalogger_config: "62.5sps"}
+                        "BH2_00": {datalogger_config: "62.5sps"}
+                        "HDH_00": {datalogger_config: "125sps"}
+                        "HHZ_00": {datalogger_config: "125sps"}
+                        "HH1_00": {datalogger_config: "125sps"}
+                        "HH2_00": {datalogger_config: "125sps"}
+                        "CDH_00": {datalogger_config: "250sps"}
+                        "CHZ_00": {datalogger_config: "250sps"}
+                        "CH1_00": {datalogger_config: "250sps"}
+                        "CH2_00": {datalogger_config: "250sps"}
+                        "CDH_01": {datalogger_config: "500sps"}
+                        "CHZ_01": {datalogger_config: "500sps"}
+                        "CH1_01": {datalogger_config: "500sps"}
+                        "CH2_01": {datalogger_config: "500sps"}
+                        "FDH_00": {datalogger_config: "1000sps"}
+                        "FHZ_00": {datalogger_config: "1000sps"}
+                        "FH1_00": {datalogger_config: "1000sps"}
+                        "FH2_00": {datalogger_config: "1000sps"}
+        "BB1_2":
+            <<: *STATION_DEFAULTS
+            site: "BBOBS1 config 2 (0.225 gain horizontals, 1x gain vertical)"
+            instruments:
+                -
+                    reference_code: "BBOBS_1_2"
+                    channel_codes_locations:
+                        "BDH_00": {datalogger_config: "62.5sps"}
+                        "BHZ_00": {datalogger_config: "62.5sps"}
+                        "BH1_00": {datalogger_config: "62.5sps"}
+                        "BH2_00": {datalogger_config: "62.5sps"}
+                        "HDH_00": {datalogger_config: "125sps"}
+                        "HHZ_00": {datalogger_config: "125sps"}
+                        "HH1_00": {datalogger_config: "125sps"}
+                        "HH2_00": {datalogger_config: "125sps"}
+                        "CDH_00": {datalogger_config: "250sps"}
+                        "CHZ_00": {datalogger_config: "250sps"}
+                        "CH1_00": {datalogger_config: "250sps"}
+                        "CH2_00": {datalogger_config: "250sps"}
+                        "CDH_01": {datalogger_config: "500sps"}
+                        "CHZ_01": {datalogger_config: "500sps"}
+                        "CH1_01": {datalogger_config: "500sps"}
+                        "CH2_01": {datalogger_config: "500sps"}
+                        "FDH_00": {datalogger_config: "1000sps"}
+                        "FHZ_00": {datalogger_config: "1000sps"}
+                        "FH1_00": {datalogger_config: "1000sps"}
+                        "FH2_00": {datalogger_config: "1000sps"}
+        "HO1_1":
+            <<: *STATION_DEFAULTS
+            site: "Hydroctopus"
+            instruments:
+                -
+                    reference_code: "HydOct_1_1"
+                    channel_codes_locations:
+                        "BDH_00": {datalogger_config: "62.5sps"}
+                        "BDH_01": {datalogger_config: "62.5sps"}
+                        "BDH_02": {datalogger_config: "62.5sps"}
+                        "BDH_03": {datalogger_config: "62.5sps"}
+                        "HDH_00": {datalogger_config: "125sps"}
+                        "HDH_01": {datalogger_config: "125sps"}
+                        "HDH_02": {datalogger_config: "125sps"}
+                        "HDH_03": {datalogger_config: "125sps"}
+                        "CDH_00": {datalogger_config: "250sps"}
+                        "CDH_01": {datalogger_config: "250sps"}
+                        "CDH_02": {datalogger_config: "250sps"}
+                        "CDH_03": {datalogger_config: "250sps"}
+                        "CDH_04": {datalogger_config: "500sps"}
+                        "CDH_05": {datalogger_config: "500sps"}
+                        "CDH_06": {datalogger_config: "500sps"}
+                        "CDH_07": {datalogger_config: "500sps"}
+                        "FDH_00": {datalogger_config: "1000sps"}
+                        "FDH_01": {datalogger_config: "1000sps"}
+                        "FDH_02": {datalogger_config: "1000sps"}
+                        "FDH_03": {datalogger_config: "1000sps"}
+            locations:
+                "00":
+                    <<: *LOC_DEFAULTS
+                "01":
+                    <<: *LOC_DEFAULTS
+                "02":
+                    <<: *LOC_DEFAULTS
+                "03":
+                    <<: *LOC_DEFAULTS
+                "04":
+                    <<: *LOC_DEFAULTS
+                "05":
+                    <<: *LOC_DEFAULTS
+                "06":
+                    <<: *LOC_DEFAULTS
+                "07":
+                    <<: *LOC_DEFAULTS
