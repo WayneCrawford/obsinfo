@@ -281,23 +281,18 @@ def _validate_script(argv=None):
 
     parser = ArgumentParser(prog="obsinfo-validate", description=__doc__)
     parser.add_argument("info_file", help="Information file")
-    parser.add_argument(
-        "-t",
-        "--type",
-        choices=VALID_TYPES,
-        default=None,
-        help="Forces information file type (overrides interpreting from filename)",
-    )
-    parser.add_argument(
-        "-f",
-        "--format",
-        choices=VALID_FORMATS,
-        default=None,
-        help="Forces information file format (overrides interpreting from filename)",
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="increase output verbosiy"
-    )
+    parser.add_argument("-t", "--type", choices=VALID_TYPES, default=None,
+                        metavar="TYPE",
+                        help="Forces information file type.  Allowed values "
+                             + "are {" + ", ".join(VALID_TYPES)
+                             + "}. (default = interpret from filename)")
+    parser.add_argument("-f",  "--format", choices=VALID_FORMATS, default=None,
+                        metavar="FMT",
+                        help="Forces information file format. Allowed values "
+                             + "are {" + ", ".join(VALID_FORMATS)
+                             + "}. (default = interpret from filename)")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="increase output verbosity")
     args = parser.parse_args()
 
     validate(args.info_file, format=args.format, type=args.type, verbose=args.verbose)

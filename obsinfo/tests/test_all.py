@@ -36,18 +36,19 @@ class TestADDONSMethods(unittest.TestCase):
         for fname in ["SPOBS.INSU-IPGP.network.yaml",
                       "BBOBS.INSU-IPGP.network.yaml"]:
             net_file = os.path.join(self.infofiles_path, "campaign", fname)
-            _make_stationXML_script([net_file, "-d", "."])
+            _make_stationXML_script([net_file, "-d", ".","--quiet"])
 
             compare = XmlTree()
             # excluded elements
-            excludes = ["Created", "Real", "Imaginary", "Numerator",
-                        "CreationDate", "Description", "Module"]
-            excludes_attributes = ["startDate", "endDate"]
+            excludes = ["Created", "Module"]
+            excludes_attributes = []
+            # excludes_attributes = ["startDate", "endDate"]
             excludes = [compare.add_ns(x) for x in excludes]
 
             for stxml in glob.glob("*.xml"):
                 xml1 = ET.parse(stxml)
-                xml2 = ET.parse(os.path.join(self.testing_path, stxml))
+                xml2 = ET.parse(os.path.join(self.testing_path, 'outputs', 
+                                             stxml))
                 self.assertTrue(compare.xml_compare(
                     compare.getroot(xml1), compare.getroot(xml2),
                     excludes=excludes,

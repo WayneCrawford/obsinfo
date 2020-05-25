@@ -120,7 +120,7 @@ class network:
         return my_net
 
     def write_stationXML(self, station_name, destination_folder=None,
-                         debug=False):
+                         quiet=False, debug=False):
         station = self.stations[station_name]
         if debug:
             print("Creating obsPy inventory object")
@@ -133,7 +133,8 @@ class network:
             destination_folder,
             "{}.{}.STATION.xml".format(self.network_info.code, station_name),
         )
-        print("Writing to", fname)
+        if not quiet:
+            print("Writing to", fname)
         my_inv.write(fname, "STATIONXML")
 
     def write_station_XMLs(self, destination_folder=None):
@@ -150,9 +151,10 @@ def _make_stationXML_script(argv=None):
 
     parser = ArgumentParser(prog="obsinfo-makeSTATIONXML", description=__doc__)
     parser.add_argument("network_file", help="Network information file")
-    parser.add_argument(
-        "-d", "--dest_path", help="Destination folder for StationXML files"
-    )
+    parser.add_argument("-d", "--dest_path",
+                        help="Destination folder for StationXML files")
+    parser.add_argument("-q", "--quiet", action="store_true",
+                        help="Run silently")
     # parser.add_argument( '-v', '--verbose',action="store_true",
     #            help='increase output verbosiy')
 
@@ -167,4 +169,4 @@ def _make_stationXML_script(argv=None):
     # print(net)
 
     for station in net.stations:
-        net.write_stationXML(station, args.dest_path)
+        net.write_stationXML(station, args.dest_path, quiet=args.quiet)
