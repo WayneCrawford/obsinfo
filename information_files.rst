@@ -45,15 +45,15 @@ Stations can be configured using objects that duplicate the object they
 will modify, but containing only the fields to be modified.  The
 configurations can be specified directly at the station level, or they can
 be pre-defined in the instrumentation or instrument_component 
-using ``Configuration definitions``, which can then be referenced at the
+using ``Configuration Definitions``, which can then be referenced at the
 station level.
 
-1) **Configuration definitions**: specify possible configurations:
+1) **Configuration Definitions**: specify possible configurations:
    
    - ``serial_number_definitions``: (differences between individual elements)
    - ``config_definitions``: (options for a given element)
   
-2) **Configuration choices**: choose the configuration
+2) **Configuration Choices**: choose the configuration
    to use at a given station and/or instrumentation:
 
    - ``serial_number`` implements the corresponding ``serial_number_definition``
@@ -102,12 +102,12 @@ the result would be::
         note: "I like to write things down"
         sample_rate: 500
     
-Most configuration choices are made in the ``Network`` file,
-but `Instrument Component Configuration`_ choices can also be made
+Most Configuration Choices are made in the ``Network`` file,
+but `Instrument Component Configuration`_ Choices can also be made
 in the ``Instrumentation`` file (for example, to set the default
 preamplifier gain for a given instrumentation).  Choices made
-"higher up" will override any conflicting choices "lower down".
-For example, a choice made in an ``Instrumentation Configuration``_
+"higher up" will override any conflicting Choices "lower down".
+For example, a Choice made in an ``Instrumentation Configuration``_
 object have precedence over those given in the corresponding
 ``Instrumentation``_ object)
 
