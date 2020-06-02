@@ -51,14 +51,14 @@ station level.
 1) **Configuration definitions**: specify possible configurations:
    
    - ``serial_number_definitions``: (differences between individual elements)
-   - ``configuration_definitions``: (options for a given element)
+   - ``config_definitions``: (options for a given element)
   
-2) **Configuration specifications**: specify the configuration
-   used by a given station and/or instrumentation:
+2) **Configuration choices**: choose the configuration
+   to use at a given station and/or instrumentation:
 
    - ``serial_number`` implements the corresponding ``serial_number_definition``
    - ``config`` implements the corresponding ``config_definition``
-   - or direct configuration
+   - direct configuration
    
 ``serial_number`` also sets the corresponding ``equipment:serial_number``
 field.  Direct configuration overwrites any duplicated fields in ``config``,
@@ -79,7 +79,7 @@ If the file LC2000.datalogger.yaml#datalogger contains::
             description: "CS5321/22 delta-sigma A/D converter + FIR digital filter"
         note: "I like to write things down"
         sample_rate: 125
-        configuration_definitions:
+        config_definitions:
             "125sps":
                 equipment:
                     description: "CS5321/22 delta-sigma A/D converter + FIR digital filter [config=125sps]"
@@ -189,9 +189,9 @@ Configuration Specification Fields (all optional)
 :``serial_number``: Specify the `Instrumentation`_  serial number (and
     ``serial_number_definition`` if it exists)
               
-:``config``: Specify the `Instrumentation`_ ``configuration_definition``
+:``config``: Specify the `Instrumentation`_ ``config_definition``
   
-:``datalogger_config``: Specify the `Datalogger`_ ``configuration_definition``
+:``datalogger_config``: Specify the `Datalogger`_ ``config_definition``
     for all channels (shortcut for
     ``channel_mods: {base: {datalogger: config}}``
 
@@ -294,7 +294,7 @@ Configuration Definition Fields
 
 Modifications to the above-mentioned fields.
 
-:``configuration_definitions``: optional configurations 
+:``config_definitions``: optional configurations 
       
 :``serial_number_definitions``: serial number based modifications
    
@@ -361,7 +361,7 @@ Instrument Component type).
     
 :``serial_number_definitions``: serial-number based modifications
 
-:``configuration_definitions``: optional configurations 
+:``config_definitions``: optional configurations 
 
 
 Component-specific Fields: 
