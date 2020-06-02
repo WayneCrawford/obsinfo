@@ -102,12 +102,12 @@ the result would be::
         note: "I like to write things down"
         sample_rate: 500
     
-Most configuration specifications are made in the ``Network`` file,
-but `Instrument Component Configuration`_ specifications can also be made
+Most configuration choices are made in the ``Network`` file,
+but `Instrument Component Configuration`_ choices can also be made
 in the ``Instrumentation`` file (for example, to set the default
-preamplifier gain for a given instrumentation).  Specifications made
-"higher up" will override any conflicting specifications "lower down".
-For example, a specification given in an ``Instrumentation Configuration``_
+preamplifier gain for a given instrumentation).  Choices made
+"higher up" will override any conflicting choices "lower down".
+For example, a choice made in an ``Instrumentation Configuration``_
 object have precedence over those given in the corresponding
 ``Instrumentation``_ object)
 
@@ -183,7 +183,7 @@ In the list below, later fields can modify earlier ones
     
 :``base``: An `Instrumentation`_ object
 
-Configuration Specification Fields (all optional)
+Configuration Choice Fields (all optional)
 -------------------------------------------------
 
 :``serial_number``: Specify the `Instrumentation`_  serial number (and
@@ -255,7 +255,7 @@ Specify `Instrument Component`_ modifications
 
 :``base``: Full Instrument Component description (see `Instrument Component`_)
 
-Configuration Specification Fields
+Configuration Choice Fields
 -------------------------------------------------
 
 :``config``: Activate `Instrument Component`_-level
@@ -329,7 +329,7 @@ Fields:
                     
 :``datalogger_modifs``: Modifications to the ``datalogger``: an object
                         with the same structure as the ``datalogger``
-                        specification, but only the values to change 
+                        object, but only the values to change 
                         specified (not validated by schema)
 
 :``sensor_modifs``: Modifications to the ``sensor``: as above
