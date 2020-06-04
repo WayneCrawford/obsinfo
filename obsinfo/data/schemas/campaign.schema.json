@@ -118,17 +118,20 @@
                     "description" : "number of minutes to plot" ,
                     "type" : "integer"
                 },
-                "source_position": {
-                    "description":"position of source, used to plot waveforms by distance rather than alphabetically",
-                    "type":"array",
-                    "items": [
-                        { "type":"number", "description":"longitude" },
-                        { "type":"number", "description":"latitude" },
-                        { "type":"number", "description":"depth (km)" }
-                    ]
-                }
+                "source_position": { "$ref": "#/definitions/source_position" }
             }
         },				            
+        "source_position": {
+            "description":"position of source, used to plot waveforms by distance",
+            "type":"object",
+            "required": ["lon", "lat"],
+            "properties": {
+                "lon": {"type": "number", "description": "longitude"},
+                "lat": {"type": "number", "description": "latitude"},
+                "depth": {"type": "number", "description": "depth (km)"}
+            },
+            "additionalProperties" : false
+        },
         "expeditions": {
             "type":"array",
             "description": "list of OBS expeditions involved in the campaign",
