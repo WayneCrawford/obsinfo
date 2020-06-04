@@ -46,7 +46,7 @@ v0.106
     ``revision:author`` if ``full_name`` not provided)
 
 v0.106.1: moved tests to obspy style (inittests inside submodule directory) 
-v0.106.2: ???
+v0.106.2: Fixed obsinfo-makeLCHEAPO and obsinfo-makeSDPCHAIN
 v0.106.3: updated campaign.yaml schema 
 
 v0.105
