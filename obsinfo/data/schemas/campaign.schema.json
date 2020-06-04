@@ -120,13 +120,15 @@
                     "type" : "integer"
                 },
                 "source_position": {
+                    "type":"object",
                     "description":"position of source, used to plot waveforms by distance rather than alphabetically",
-                    "type":"array",
-                    "items": [
-                        { "type":"number", "description":"longitude" },
-                        { "type":"number", "description":"latitude" },
-                        { "type":"number", "description":"depth (km)" }
-                    ]
+                    "required": ["lat", "lon"],
+                    "properties": {
+                        "lat": {"type": "number", "description": "longitude"},
+                        "lon": {"type": "number", "description": "latitude"},
+                        "depth": {"type": "number", "description": "depth (km)"}
+                    },
+                    "additionalProperties" : false
                 }
             }
         },				            
