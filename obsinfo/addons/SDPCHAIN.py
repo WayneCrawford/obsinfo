@@ -147,7 +147,7 @@ def __ms2sds_script(station, in_path, out_path):
 
     s += "# - Collect input filenames\n"
     s += "command cd $STATION_DIR/$in_dir\n"
-    s += "mseedfiles=$(ls *.mseed)\n"
+    s += "mseedfiles=$(command ls *.mseed)\n"
     s += "command cd -\n"
     s += 'echo "mseedfiles=" $mseedfiles\n'
 
@@ -236,7 +236,7 @@ def __msdrift_script(in_path, out_path, clock_corrs):
 
     s += "# - Collect input filenames\n"
     s += f"command cd $STATION_DIR/$in_dir\n"
-    s += "mseedfiles=$(ls *.mseed)\n"
+    s += "mseedfiles=$(command ls *.mseed)\n"
     s += "command cd -\n"
     s += 'echo "mseedfiles=" $mseedfiles\n'
 

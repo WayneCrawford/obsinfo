@@ -48,6 +48,8 @@ v0.106
 v0.106.1: moved tests to obspy style (inittests inside submodule directory) 
 v0.106.2: Fixed obsinfo-makeLCHEAPO and obsinfo-makeSDPCHAIN
 v0.106.3: updated campaign.yaml schema 
+v0.106.4: changed "ls" to "command ls" in process scripts, avoids problems with
+          aliased versions of ls
 
 v0.105
 ------

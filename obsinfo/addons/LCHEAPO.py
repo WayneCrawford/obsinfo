@@ -91,7 +91,7 @@ def __lcfix_commands(station, in_path, out_path, in_fnames="*.raw.lch"):
 
     s += "# - Collect input filenames\n"
     s += "command cd $STATION_DIR/$in_dir\n"
-    s += f"lchfiles=$(ls {in_fnames})\n"
+    s += f"lchfiles=$(command ls {in_fnames})\n"
     s += "command cd -\n"
     s += 'echo "lchfile(s): " $lchfiles\n'
 
@@ -151,7 +151,7 @@ def __lc2ms_commands(
 
     s += "# - Collect input filenames\n"
     s += "command cd $STATION_DIR/$in_dir\n"
-    s += f"lchfiles=$(ls {in_fnames})\n"
+    s += f"lchfiles=$(command ls {in_fnames})\n"
     s += "command cd -\n"
     s += 'echo "lchfile(s): " $lchfiles\n'
 
