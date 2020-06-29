@@ -42,7 +42,8 @@ def get_information_file_type(filename):
     Determines the type of a file, assuming that the filename is "*.{TYPE}.{SOMETHING}
     """
 
-    the_type = filename.split(".")[-2].split("/")[-1].lower()
+    # the_type = filename.split(".")[-2].split("/")[-1].lower()
+    the_type = os.path.basename(filename).split(".")[-2].lower()
     if the_type in VALID_TYPES:
         return the_type
     print(f"Unknown type: {the_type}")
@@ -69,8 +70,7 @@ def validate(filename, format=None, type=None, verbose=False, quiet=False):
     instance = read_json_yaml(filename, format=format)
 
     SCHEMA_FILE = pkg_resources.resource_filename(
-        "obsinfo", f"data/schemas/{type}.schema.json"
-    )
+        "obsinfo",  os.path.join("data","schemas",f"{type}.schema.json"))
     base_path = os.path.dirname(SCHEMA_FILE)
     base_uri = f"file://{base_path}/"
     with open(SCHEMA_FILE, "r") as f:
