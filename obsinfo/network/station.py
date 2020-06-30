@@ -170,7 +170,7 @@ class station:
                     else None,
                     data_logger=oi_obspy.equipment(
                                     chan["datalogger"].equipment),
-                    equipment=None,
+                    equipments=None,
                     response=response,
                     description=None,
                     comments=[channel_comment] if channel_comment else None,
@@ -207,7 +207,7 @@ class station:
             if "email" in self.operator:
                 contacts = [obspy_util.Person(emails=[self.operator["email"]])]
             website = self.operator.get("website", None)
-            operator = obspy_util.Operator([agency], contacts, website)
+            operator = obspy_util.Operator(agency, contacts, website)
 
             if debug:
                 print(obspy_comments)
@@ -224,10 +224,8 @@ class station:
                 site=obspy_util.Site(getattr(self, "site", "")),
                 vault=sta_loc["vault"],
                 geology=sta_loc["geology"],
-                equipments=[
-                    oi_obspy.equipment(instrument.equipment)
-                    for instrument in self.instruments
-                ],
+                equipments=[oi_obspy.equipment(instrument.equipment)
+                            for instrument in self.instruments],
                 operators=[operator],
                 creation_date=start_date,  # Needed to write StationXML
                 termination_date=end_date,
