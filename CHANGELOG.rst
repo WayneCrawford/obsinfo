@@ -50,6 +50,8 @@ v0.106.2: Fixed obsinfo-makeLCHEAPO and obsinfo-makeSDPCHAIN
 v0.106.3: updated campaign.yaml schema 
 v0.106.4: changed "ls" to "command ls" in process scripts, avoids problems with
           aliased versions of ls
+v0.106.4.1: attempt to fix bug where schema file pathnames are incorrectly
+               parsed on Windows
 
 v0.105
 ------

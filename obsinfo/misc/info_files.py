@@ -8,6 +8,7 @@ import pprint
 import os.path
 import sys
 import pkg_resources
+import urllib.request
 
 # Non-standard modules
 import jsonschema
@@ -71,8 +72,8 @@ def validate(filename, format=None, type=None, verbose=False, quiet=False):
 
     SCHEMA_FILE = pkg_resources.resource_filename(
         "obsinfo",  os.path.join("data","schemas",f"{type}.schema.json"))
-    base_path = os.path.dirname(SCHEMA_FILE)
-    base_uri = f"file://{base_path}/"
+    base_uri = "file://{}/".format(
+        urllib.request.pathname2url(os.path.dirname(SCHEMA_FILE)))
     with open(SCHEMA_FILE, "r") as f:
         try:
             schema = jsonref.loads(f.read(), base_uri=base_uri, jsonschema=True)
