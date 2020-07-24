@@ -154,6 +154,12 @@
                 "datalogger":    {"$ref": "#/definitions/datalogger_struct"},
                 "sensor":        {"$ref": "#/definitions/sensor_struct"},
                 "preamplifier":  {"$ref": "#/definitions/preamplifier_struct"},
+                "datalogger_config":        {"type": "string"},
+                "datalogger_serial_number": {"type": "string"},
+                "sensor_config":            {"type": "string"},
+                "sensor_serial_number":     {"type": "string"},
+                "preamplifier_config":      {"type": "string"},
+                "preamplifier_serial_number": {"type": "string"},
                 "location_code": {"$ref": "#/definitions/location_code"},
                 "start_date":    {"$ref": "definitions.schema.json#/date-time-Z" },
                 "end_date":      {"$ref": "definitions.schema.json#/date-time-Z" }

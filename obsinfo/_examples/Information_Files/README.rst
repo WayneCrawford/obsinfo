@@ -14,6 +14,8 @@ This directory contains sample information files in two directories:
     code
   * ``instrument_components.yaml``: An inventory of instrumentation components used in the ``instrumentation``.
   * a ``/responses`` directory containing individual sensor, datalogger and filter stages
+  
+* a ``/project`` directory, which is just a test of a possible project-level (multiple campaigns) file
 
 The information files can be in YAML or JSON format.
 

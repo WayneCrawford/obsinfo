@@ -39,7 +39,7 @@ class Instrumentation(object):
         Create Instrumentation instance from an info_dict
         """
         info_dict = InfoDict(info_dict)
-        info_dict.complete_das_channels()
+        info_dict = cls._complete_das_channels(info_dict)
         info_das = info_dict.get('das_channels', {})
         obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
                   [Channel.from_info_dict(v, k)
@@ -50,6 +50,32 @@ class Instrumentation(object):
         s = f'Instrumentation({type(self.equipment)}, '
         s += f'{len(self.channels)} {type(self.channels[0])}'
         return s
+
+    @staticmethod
+    def _complete_das_channels(info_dict):
+        """
+        Complete 'das_channels' using 'base_channel'.
+
+        Fields must be at the top level.
+        'base_channel' is deleted
+
+        >>> A = InfoDict(base_channel={'a': 5, 'b':6},
+                         das_channels={'1': {'a': 7}, '2': {'b':0}})
+        >>> self.complete_das_channels(A)
+        >>> A
+        {'das_channels': {'1': {'a': 7, 'b': 6}, '2': {'a': 5, 'b': 0}}}
+        """
+        assert 'das_channels'  in info_dict,\
+            f"No 'das_channels' key in {info_dict.keys()}"
+        assert 'base_channel' in info_dict,\
+            f"No 'base_channel' key in {info_dict.keys()}"
+        for key, value in info_dict['das_channels'].items():
+            # print(f'"{key}"')
+            temp = InfoDict(value)
+            info_dict['das_channels'][key] = InfoDict(info_dict['base_channel'])
+            info_dict['das_channels'][key].update(temp)
+        del info_dict['base_channel']
+        return info_dict
 
 
 class Channel(object):

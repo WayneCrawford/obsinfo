@@ -162,11 +162,15 @@
         },
         "response_element_list": {
             "type" : "array",
-            "items" : {
-                "type" : "array",
-                "description" : "[frequency (Hz), amplitude, phase (degrees)]",
-                "minItems": 3, "maxItems": 3
-            }
+            "minitems": 1,
+            "items" : {"$ref": "#/definitions/response_element"}
+        },
+        "response_element": {
+            "type" : "array",
+            "description" : "[frequency (Hz), amplitude, phase (degrees)]",
+            "minItems": 3,
+            "maxItems": 3,
+            "items" : {"type" : "number"}
         },
         "AD_full_scale": {
             "type": "number",

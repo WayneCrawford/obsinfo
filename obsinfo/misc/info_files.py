@@ -7,6 +7,7 @@ import pprint
 import os.path
 import sys
 import pkg_resources
+import urllib.request
 
 # Non-standard modules
 import jsonschema
@@ -45,7 +46,7 @@ def get_information_file_type(filename):
     Determines the type of a file, assuming that the filename is "*.{TYPE}.{SOMETHING}
     """
 
-    the_type = filename.split(".")[-2].split("/")[-1].lower()
+    the_type = os.path.basename(filename).split(".")[-2].lower()
     if the_type in VALID_TYPES:
         return the_type
     print(f"Unknown type: {the_type}")
@@ -79,12 +80,10 @@ def validate(filename, format=None, type=None, verbose=False,
 
     if not schema_file:
         schema_file = pkg_resources.resource_filename(
-            "obsinfo", f"data/schemas/{type}.schema.json"
-        )
-    base_path = os.path.dirname(schema_file)
-    base_uri = f"file:{base_path}/"
-    # base_uri = f"file://{base_path}/"
-    # print(base_uri)
+            "obsinfo", os.path.join("data", "schemas",
+                                    f"{type}.schema.json"))
+    base_uri = "file://{}/".format(
+        urllib.request.pathname2url(os.path.dirname(schema_file)))
     with open(schema_file, "r") as f:
         try:
             schema = yamlref.loads(f.read(), base_uri=base_uri, jsonschema=True)

@@ -72,6 +72,7 @@
                 "orientation"
             ],
             "properties" :  {
+                "notes" :      {"$ref": "definitions.schema.json#/note_list"},
                 "band_base":   {"$ref": "#/definitions/seed_band_base" },
                 "instrument":  {"$ref": "#/definitions/seed_instrument_code" },
                 "orientation": {"$ref": "#/definitions/seed_orientations_map" }
