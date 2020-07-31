@@ -27,7 +27,7 @@
                 "site",
                 "start_date",
                 "end_date",
-                "instruments",
+                "instrumentations_configs",
                 "locations",
                 "location_code"
             ],
@@ -39,7 +39,7 @@
                 "end_date":          {"$ref": "definitions.schema.json#/date-time-Z" },
                 "location_code":     {"$ref": "#/definitions/location_code"},
                 "locations":         {"$ref": "#/definitions/locations_map" },
-                "instruments":       {"$ref": "#/definitions/instrumentation_list" },
+                "instrumentations_configs":       {"$ref": "#/definitions/instrumentation_config_list" },
                 "processing":        {"$ref": "#/definitions/processing_list"},
                 "extras":            {"$ref": "definitions.schema.json#/extras"},
                 "restricted_status": {
@@ -93,18 +93,18 @@
             },
             "additionalProperties" : false
         },
-       "instrumentation_list": {
+       "instrumentation_config_list": {
            "type": "array",
-           "description":" list of instrumentation",
+           "description":" list of instrumentation and their configuration",
            "minItems" : 1,
            "items" : { 
-                "$ref": "#/definitions/instrumentation_object"
+                "$ref": "#/definitions/instrumentation_config_object"
             }
         },
-        "instrumentation_object":
+        "instrumentation_config_object":
         {
             "type": "object",
-            "description": "Instrumentation descriptor",
+            "description": "Instrumentation and its configuration",
             "required": [ "base" ],
             "properties" : {
                 "base":                     {"$ref": "instrumentation.schema.json#/definitions/instrumentation"},
@@ -131,12 +131,10 @@
         },
         "channel_mods": {
             "type": "object",
-            "description": "modifications to instrument channels.  'by_das', 'by_chan_mod' or 'by_orientation' add to the 'base_channel_mod' values.  Only use one '*_by_*', usually 'by_orientation' unless more than one channel has the same orientation code",
+            "description": "modifications to instrument channels.  'das_channels' add to the 'base_channel' values.  Only use one '*_by_*', usually 'by_orientation' unless more than one channel has the same orientation code",
             "properties": {
-                "base":           {"$ref": "#/definitions/base_channel_mod"},
-                "by_das":         {"$ref": "#/definitions/channel_mods_map"},
-                "by_orientation": {"$ref": "#/definitions/channel_mods_map"},
-                "by_chan_loc":    {"$ref": "#/definitions/channel_mods_map"}
+                "base_channel":   {"$ref": "#/definitions/base_channel_mod"},
+                "das_channels":   {"$ref": "#/definitions/channel_mods_map"},
             },
             "additionalProperties": false
         },

@@ -11,7 +11,7 @@ stage:
         frequency: 0
         value: 1165084 #  counts/V
     filter:
-        type : "AD_CONVERSION"
+        type : "ADConversion"
         input_full_scale : 9 #  9 V pp
         output_full_scale : 10485760 #  4FFFFF@Vref and B00000@-Vref
     extras:

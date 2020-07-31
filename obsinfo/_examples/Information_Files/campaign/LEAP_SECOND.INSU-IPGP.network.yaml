@@ -30,7 +30,7 @@ network:
             start_date: "2016-07-01T12:00:00"
             end_date: ~
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/SPOBS2.instrumentation.yaml#instrumentation"

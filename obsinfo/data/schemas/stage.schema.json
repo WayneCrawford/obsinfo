@@ -3,7 +3,7 @@
 	"title": "Response",
 	"description": "OBS instrument/stage response files. Stages will be ordered sensor -> ana_filter -> datalogger",
 	"type": "object",
-	"required": [ "response","format_version" ],
+	"required": [ "stage","format_version" ],
 	"properties": {
 	    "format_version": {"$ref" : "#/format_version"},
 	    "revision":       {"$ref" : "definitions.schema.json#/revision"},

@@ -11,5 +11,8 @@ preamplifier:
         description: "Differential Pressure Gauge Card"
         manufacturer: "SIO-IPGP"
         vendor: ~
-    response_stages:
-        - $ref: "responses/SIO-LDEO_DPG-Card__theoretical.stage.yaml#stage"
+    configuration: "default"
+    configuration_definitions:
+        "default":
+            response_stages:
+                - $ref: "responses/SIO-LDEO_DPG-Card__theoretical.stage.yaml#stage"

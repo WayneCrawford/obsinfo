@@ -454,12 +454,12 @@ def comments(comments, processing, supplements, loc_code, location, debug=False)
 
 def lon_lats(location, debug=False):
     """ Calculate obspy util.Latitude and util.Longitude"""
-    longitude = float(location["position"]["lon"])
-    latitude = float(location["position"]["lat"])
+    longitude = float(location.longitude)
+    latitude = float(location.latitude)
     meters_per_degree_lat = 1852.0 * 60.0
     meters_per_degree_lon = 1852.0 * 60.0 * m.cos(latitude * m.pi / 180.0)
-    lat_uncert = location["uncertainties.m"]["lat"] / meters_per_degree_lat
-    lon_uncert = location["uncertainties.m"]["lon"] / meters_per_degree_lon
+    lat_uncert = location.lat_uncertainty_m / meters_per_degree_lat
+    lon_uncert = location.lon_uncertainty_m / meters_per_degree_lon
     # REDUCE UNCERTAINTIES TO 3 SIGNIFICANT FIGURES
     lat_uncert = float("{:.3g}".format(lat_uncert))
     lon_uncert = float("{:.3g}".format(lon_uncert))

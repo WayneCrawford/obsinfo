@@ -23,9 +23,9 @@
     "definitions": {
         "preamplifier" : {
             "description": "Basic preamplifier specification",
-            "required": ["equipment"],
+            "required": ["equipment", "configuration"],
             "properties": {
-                "config_description": {"type": "string"},
+                "configuration":      {"type": "string"},
                 "notes":              {"$ref": "definitions.schema.json#/note_list"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType" },
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
@@ -48,11 +48,9 @@
         },
         "preamplifier_config" : {
             "description" : "Configuration-specific preamplifier properties",
-            "required": ["config_description"],
             "properties": {
-                "config_description": {"type": "string"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType_noRequired"},
-                "responses_ordered":    {"$ref": "response_stages.schema.json#/definitions/response_stages" }
+                "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" }
             },
             "response_stages": false
         },

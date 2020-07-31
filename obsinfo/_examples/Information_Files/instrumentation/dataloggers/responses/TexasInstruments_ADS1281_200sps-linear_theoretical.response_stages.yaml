@@ -13,7 +13,7 @@ response_stages:
         decimation_factor: 64
         output_sample_rate: 6400
         filter:
-            type : "AD_CONVERSION"
+            type : "ADConversion"
             input_full_scale : 5 #  = VREFP - VREFN
             output_full_scale : 4294967292 #  7FFFFFFEh@Vref/2 and 80000001@-Vref/2
     - $ref: "TI_ADS1281_FIR1.stage.yaml#stage"

@@ -36,11 +36,11 @@ class Filter():
                 obj = Coefficients.from_info_dict(info_dict)
             elif info_dict['type'] == 'ResponseList':
                 obj = ResponseList.from_info_dict(info_dict)
-            elif info_dict['type'] == 'AD_CONVERSION':
+            elif info_dict['type'] == 'ADConversion':
                 obj = AD_Conversion.from_info_dict(info_dict)
-            elif info_dict['type'] == 'ANALOG':
+            elif info_dict['type'] == 'Analog':
                 obj = Analog.from_info_dict(info_dict)
-            elif info_dict['type'] == 'DIGITAL':
+            elif info_dict['type'] == 'Digital':
                 obj = Digital.from_info_dict(info_dict)
             else:
                 warnings.warn(f'Unknown Filter type: "{info_dict["type"]}"')
@@ -74,10 +74,10 @@ class PolesZeros(Filter):
         """
         obj = cls(info_dict.get('transfer_function_type',
                                 'LAPLACE (RADIANS/SECOND)'),
-                  [(float(x[0]) + 1j*float(x[1]))\
-                    for x in info_dict.get('poles', [])],
                   [(float(x[0]) + 1j*float(x[1]))
-                    for x in info_dict.get('zeros', [])],
+                   for x in info_dict.get('poles', [])],
+                  [(float(x[0]) + 1j*float(x[1]))
+                   for x in info_dict.get('zeros', [])],
                   info_dict.get('normalization_frequency', 1.),
                   info_dict.get('normalization_factor', None))
         return obj

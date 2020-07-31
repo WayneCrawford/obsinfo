@@ -23,9 +23,9 @@
     "definitions": {
         "sensor": { 
             "description": "Basic sensor specification",
-            "required": ["equipment", "response_stages", "seed_codes"],
+            "required": ["equipment", "configuration", "configuration_definitions"],
             "properties": {
-                "config_description": {"type": "string"},
+                "configuration":      {"type": "string"},
                 "notes":              {"$ref": "definitions.schema.json#/note_list"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType"},
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
@@ -45,9 +45,8 @@
         },
         "sensor_config": { 
             "description": "Configuration-specific sensor properties",
-            "required": ["config_description"],
+            "required": ["response_stages", "seed_codes"],
             "properties": {
-                "config_description": {"type": "string"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType_noRequired"},
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
                 "seed_codes":         {"$ref": "#/definitions/seed_codes"}

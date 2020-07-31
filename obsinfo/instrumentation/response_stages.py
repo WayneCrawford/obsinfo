@@ -33,6 +33,9 @@ class ResponseStages():
         s = f'Response_Stages([{len(self.stages):d}x{type(self.stages[0])}])'
         return s
 
+    def __len__(self):
+        return len(self.stages)
+
     def __add__(self, other):
         """
         Add two Response_Stages objects together
@@ -68,9 +71,9 @@ class ResponseStages():
                 if next_stage.output_sample_rate:
                     assert next_stage.output_sample_rate == next_rate,\
                         'stage {:d} sample rate ({:g}) != expected ({:g})'.\
-                            format(next_stage.stage_sequence_number,
-                                   next_stage.output_sample_rate,
-                                   next_rate)
+                        format(next_stage.stage_sequence_number,
+                               next_stage.output_sample_rate,
+                               next_rate)
                 else:
                     next_stage.output_sample_rate = next_rate
             stage = next_stage
@@ -90,6 +93,8 @@ class ResponseStages():
 
         info_dict is just a list of Stage()s in this case
         """
+        if info_dict is None:
+            return []
         obj = cls([Stage.from_info_dict(s) for s in info_dict])
         return obj
 

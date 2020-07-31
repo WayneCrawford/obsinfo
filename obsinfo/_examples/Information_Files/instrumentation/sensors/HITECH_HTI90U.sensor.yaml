@@ -17,10 +17,13 @@ sensor:
                 serial number 220xxx, 0.05-2500 Hz
         manufacturer: "HiTech, inc"
         vendor: "various"
-    seed_codes:
-        band_base: "B"
-        instrument: "D"
-        orientation:
-            "H": {azimuth.deg: [0,0], dip.deg: [90,0]}
-    response_stages:
-        - $ref: "responses/HiTech_HTI-90U_SIO-preamp_theoretical.stage.yaml#stage"
+    configuration: "SIO_20s"
+    configuration_definitions:
+        "SIO_20s":
+            seed_codes:
+                band_base: "B"
+                instrument: "D"
+                orientation:
+                    "H": {azimuth.deg: [0, 0], dip.deg: [90, 0]}
+            response_stages:
+                - $ref: "responses/HiTech_HTI-90U_SIO-preamp_theoretical.stage.yaml#stage"

@@ -14,12 +14,15 @@ sensor:
         description: "Sercel L-28LB 4.5 Hz 3C geophone, 395 ohm coil and 2490 ohm shunt"
         manufacturer: "Sercel"
         vendor: "various"
-    seed_codes:
-        band_base: "S"
-        instrument: "H"
-        orientation:
-            "3": {azimuth.deg: [0,0],    dip.deg: [90,0]}
-            "1": {azimuth.deg: [0,180],  dip.deg: [0,0]}
-            "2": {azimuth.deg: [90,180], dip.deg: [0,0]}
-    response_stages:
-        - $ref: "responses/Sercel_L28LB_LCHEAPO_theoretical.stage.yaml#stage"
+    configuration: "C395_S2490"
+    configuration_definitions:
+        "C395_S2490":
+            seed_codes:
+                band_base: "S"
+                instrument: "H"
+                orientation:
+                    "3": {azimuth.deg: [0, 0],    dip.deg: [90, 0]}
+                    "1": {azimuth.deg: [0, 180],  dip.deg: [0, 0]}
+                    "2": {azimuth.deg: [90, 180], dip.deg: [0, 0]}
+            response_stages:
+                - $ref: "responses/Sercel_L28LB_LCHEAPO_theoretical.stage.yaml#stage"

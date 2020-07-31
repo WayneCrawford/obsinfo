@@ -11,9 +11,9 @@ preamplifier:
         description: "SIO gain/filter card, seismo channel"
         manufacturer: "SIO or IPGP"
         vendor: ~
-    config_description: "128x gain"
-    response_stages:
-        - $ref: "responses/INSU_SPOBS_L28x128_theoretical.stage.yaml#stage"
+    configuration: "128x"
     configuration_definitions:
         "128x":
             config_description: "128x gain"
+            response_stages:
+                - $ref: "responses/INSU_SPOBS_L28x128_theoretical.stage.yaml#stage"

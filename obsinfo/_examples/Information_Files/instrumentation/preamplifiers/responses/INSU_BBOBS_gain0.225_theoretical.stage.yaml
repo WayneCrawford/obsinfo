@@ -6,6 +6,6 @@ stage:
     output_units : {name: "V", description: "VOLTS"}
     gain : {value : 0.225, frequency: 0}
     filter :
-        type : "ANALOG"
+        type : "Analog"
     extras:
         DBIRD_response_type : "THEORETICAL" 

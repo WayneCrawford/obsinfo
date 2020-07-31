@@ -23,7 +23,7 @@
     "definitions": {
         "datalogger" : {
             "description": "Basic datalogger specification",
-            "required": ["sample_rate","response_stages","equipment"],
+            "required": ["configuration"],
             "properties": {
                 "notes":              {"$ref": "definitions.schema.json#/note_list"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType"},
@@ -31,7 +31,7 @@
                 "sample_rate":        {"type": "number", "minimum": 0},
                 "delay_correction":   {"$ref": "#/definitions/delay_correction"},
                 "serial_numbers":     {"$ref": "#/definitions/datalogger_serial_numbers_map"},
-                "config_description": {"type": "string"},
+                "configuration":      {"type": "string"},
                 "configuration_definitions": {"$ref": "#/definitions/datalogger_configs_map"},
                 "serial_number_definitions": {"$ref": "#/definitions/datalogger_configs_map"}
             },
@@ -47,9 +47,7 @@
         },
         "datalogger_config" : { 
             "description": "Configuration-specific datalogger properties",
-            "required": ["config_description"],
             "properties": {
-                "config_description": {"type": "string"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType"},
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
                 "sample_rate":        {"type": "number", "minimum": 0},

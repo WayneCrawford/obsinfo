@@ -11,15 +11,11 @@ preamplifier:
         description: "INSU BBOBS gain card"
         manufacturer: "SIO or IPGP"
         vendor: ~
-    config_description: "1x gain"
-    response_stages:
-        - $ref: "responses/INSU_BBOBS_gain1.0_theoretical.stage.yaml#stage"
+    configuration: "1x"
     configuration_definitions:
         "0.225x":
-            config_description: "0.225x gain"
             response_stages:
                 - $ref: "responses/INSU_BBOBS_gain0.225_theoretical.stage.yaml#stage"
         "1x":
-            config_description: "1x gain"
             response_stages:
                 - $ref: "responses/INSU_BBOBS_gain1.0_theoretical.stage.yaml#stage"

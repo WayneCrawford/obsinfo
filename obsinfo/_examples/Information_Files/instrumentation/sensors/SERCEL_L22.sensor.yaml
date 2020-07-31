@@ -14,10 +14,13 @@ sensor:
         description: "Sercel L-22 2 Hz vertical geophone"
         manufacturer: "Sercel"
         vendor: "various"
-    seed_codes:
-        band_base: "S"
-        instrument: "H"
-        orientation:
-            "3": {azimuth.deg: [0,0],    dip.deg: [90,0]}
-    response_stages:
-        - $ref: "responses/Sercel_L22D_LCHEAPO_theoretical.stage.yaml#stage"
+    configuration: "LCHEAPO"
+    configuration_definitions:
+        "LCHEAPO":
+            seed_codes:
+                band_base: "S"
+                instrument: "H"
+                orientation:
+                    "3": {azimuth.deg: [0,0],    dip.deg: [90,0]}
+            response_stages:
+                - $ref: "responses/Sercel_L22D_LCHEAPO_theoretical.stage.yaml#stage"

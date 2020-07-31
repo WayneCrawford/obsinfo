@@ -219,7 +219,7 @@ class TestADDONSMethods(unittest.TestCase):
         """
         A = InfoDict(base_channel=dict(a=1, b=dict(c=2, d=3)),
                      das_channels={'1': dict(b=dict(c=5)), '2': dict(a=4)})
-        A.complete_das_channels()
+        A = Instrumentation._complete_das_channels(A)
         self.assertTrue(
             A == InfoDict(
                 das_channels={'1': dict(a=1, b=dict(c=5, d=3)),

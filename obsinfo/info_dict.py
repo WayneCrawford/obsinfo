@@ -126,27 +126,27 @@ class InfoDict(UpDict):
     """
     UpDict subclass with specific obsinfo-savvy routines
     """                
-    def complete_das_channels(self):
-        """
-        Complete 'das_channels' using 'base_channel'.
-
-        Fields must be at the top level.
-        'base_channel' is deleted
-
-        >>> A = InfoDict(base_channel={'a': 5, 'b':6},
-                         das_channels={'1': {'a': 7}, '2': {'b':0}})
-        >>> A.complete_das_channels()
-        >>> A
-        {'das_channels': {'1': {'a': 7, 'b': 6}, '2': {'a': 5, 'b': 0}}}
-        """
-        assert 'das_channels'  in self, f"No 'das_channels' key in {self.keys()}"
-        assert 'base_channel' in self, f"No 'base_channel' key in {self.keys()}"
-        for key, value in self['das_channels'].items():
-            # print(f'"{key}"')
-            temp = InfoDict(value)
-            self['das_channels'][key] = InfoDict(self['base_channel'])
-            self['das_channels'][key].update(temp)
-        del self['base_channel']
+#    def complete_das_channels(self):
+#        """
+#        Complete 'das_channels' using 'base_channel'.
+#
+#        Fields must be at the top level.
+#        'base_channel' is deleted
+#
+#        >>> A = InfoDict(base_channel={'a': 5, 'b':6},
+#                         das_channels={'1': {'a': 7}, '2': {'b':0}})
+#        >>> A.complete_das_channels()
+#        >>> A
+#        {'das_channels': {'1': {'a': 7, 'b': 6}, '2': {'a': 5, 'b': 0}}}
+#        """
+#        assert 'das_channels'  in self, f"No 'das_channels' key in {self.keys()}"
+#        assert 'base_channel' in self, f"No 'base_channel' key in {self.keys()}"
+#        for key, value in self['das_channels'].items():
+#            # print(f'"{key}"')
+#            temp = InfoDict(value)
+#            self['das_channels'][key] = InfoDict(self['base_channel'])
+#            self['das_channels'][key].update(temp)
+#        del self['base_channel']
 
     def update_by_config_SN(self, config=None, serial_number=None):
         """

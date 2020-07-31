@@ -13,10 +13,13 @@ sensor:
         description: "HiTech HTI-04-PLC-ULF hydrophone, 0.01-XXX Hz"
         manufacturer: "HiTech, inc"
         vendor: "various"
-    seed_codes:
-        band_base: "B"
-        instrument: "D"
-        orientation:
-            "H": {azimuth.deg: [0,0], dip.deg: [90,0]}
-    response_stages:
-        - $ref: "responses/HiTech_HTI-04-PLC-ULF_voltage-mode_theoretical.stage.yaml#stage"
+    configuration: "default"
+    configuration_definitions:
+        "default":
+            seed_codes:
+                band_base: "B"
+                instrument: "D"
+                orientation:
+                    "H": {azimuth.deg: [0,0], dip.deg: [90,0]}
+            response_stages:
+                - $ref: "responses/HiTech_HTI-04-PLC-ULF_voltage-mode_theoretical.stage.yaml#stage"

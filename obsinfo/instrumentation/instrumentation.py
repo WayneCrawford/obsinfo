@@ -8,13 +8,16 @@ nomenclature:
     An "Instrumentation" combines one or more measurement Channels
 """
 # Standard library modules
+import pprint
 
 # Non-standard modules
 
 # obsinfo modules
-from .instrument_component import (Datalogger, Sensor, Preamplifier,
-                                   Equipment)
+from .instrument_component import (InstrumentComponent, Datalogger, Sensor,
+                                   Preamplifier)
 from ..info_dict import InfoDict
+
+pp = pprint.PrettyPrinter(indent=4, depth=4, width=80)
 
 
 class Instrumentation(object):
@@ -34,14 +37,18 @@ class Instrumentation(object):
         self.channels = channels
 
     @classmethod
-    def from_info_dict(cls, info_dict):
+    def from_info_dict(cls, info_dict, debug=False):
         """
         Create Instrumentation instance from an info_dict
         """
         info_dict = InfoDict(info_dict)
+        info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
         info_dict = cls._complete_das_channels(info_dict)
         info_das = info_dict.get('das_channels', {})
-        obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
+        if debug:
+            print("Instrumentation.from_info_dict info_dict['das_channels']")
+            pp.pprint(info_das)
+        obj = cls(info_dict.get('equipment', None),
                   [Channel.from_info_dict(v, k)
                    for k, v in info_das.items()])
         return obj
@@ -58,21 +65,16 @@ class Instrumentation(object):
 
         Fields must be at the top level.
         'base_channel' is deleted
-
-        >>> A = InfoDict(base_channel={'a': 5, 'b':6},
-                         das_channels={'1': {'a': 7}, '2': {'b':0}})
-        >>> self.complete_das_channels(A)
-        >>> A
-        {'das_channels': {'1': {'a': 7, 'b': 6}, '2': {'a': 5, 'b': 0}}}
         """
-        assert 'das_channels'  in info_dict,\
+        assert 'das_channels' in info_dict,\
             f"No 'das_channels' key in {info_dict.keys()}"
         assert 'base_channel' in info_dict,\
             f"No 'base_channel' key in {info_dict.keys()}"
         for key, value in info_dict['das_channels'].items():
             # print(f'"{key}"')
             temp = InfoDict(value)
-            info_dict['das_channels'][key] = InfoDict(info_dict['base_channel'])
+            info_dict['das_channels'][key] = InfoDict(
+                info_dict['base_channel'])
             info_dict['das_channels'][key].update(temp)
         del info_dict['base_channel']
         return info_dict
@@ -84,8 +86,13 @@ class Channel(object):
 
     Corresponds to StationXML/obspy Channel, plus das_channel code
     """
-    def __init__(self, instrument, das_channel, orientation_code,
-                 location=None, startdate=None, enddate=None):
+    def __init__(self,
+                 instrument,
+                 das_channel,
+                 orientation_code,
+                 location_code=None,
+                 startdate=None,
+                 enddate=None):
         """
         :param instrument: instrument description
         :type instrument: ~class `Instrument`
@@ -103,26 +110,36 @@ class Channel(object):
         self.instrument = instrument
         self.das_channel = das_channel
         self.orientation_code = orientation_code
+        # print(instrument)
+        assert orientation_code in instrument.seed_orientations,\
+            print('orientation code "{}" not in seed_orientations: "{}"'.
+                  format(orientation_code,
+                         instrument.seed_orientations.keys()))
         self.orientation = instrument.seed_orientations[orientation_code]
-        self.location_code = location
+        self.location_code = location_code
         self.startdate = startdate
         self.enddate = enddate
 
     @classmethod
-    def from_info_dict(cls, info_dict, das_channel=None):
+    def from_info_dict(cls, info_dict, das_channel, debug=False):
         """
         Create instance from an info_dict
 
         :param info_dict: information dictionary at
                           instrument:das_channels level
         :type info_dict: dict
+        :param das_channel: DAS channel code corresponding to this Channel
+        :type das_channel: str
         """
         # print({'datalogger': info_dict['datalogger'],
         #        'sensor': info_dict['sensor'],
         #        'preamplifier': info_dict.get('preamplifier', None)})
         # print(InfoDict(datalogger=info_dict['datalogger'],
-        #                      sensor=info_dict['sensor'],
-        #                      preamplifier=info_dict.get('preamplifier', None))
+        #                sensor=info_dict['sensor'],
+        #                preamplifier=info_dict.get('preamplifier', None))
+        if debug:
+            print("Channel.from_info_dict info_dict['sensor']")
+            pp.pprint(info_dict['sensor'])
         obj = cls(Instrument.from_info_dict(
                     {'datalogger': info_dict['datalogger'],
                      'sensor': info_dict['sensor'],
@@ -177,6 +194,20 @@ class Channel(object):
                 + inst_code
                 + self.orientation_code)
 
+    @staticmethod
+    def band_base_code(self, code):
+        """
+        Return the 'base' code ('B' or 'S') corresponding to a band code)
+        """
+        assert len(code) == 1,\
+            f'Band code "{code}" is not a single letter'
+        if code in "FCHBMLVURPTQ":
+            return 'B'
+        elif code in "GDES":
+            return "S"
+        else:
+            raise NameError(f'Unknown band code: "{code}"')
+
     def _band_code(self, sample_rate):
         """
         Return the channel band code
@@ -225,12 +256,96 @@ class Channel(object):
         else:
             raise NameError(f'Unknown band base code: "{bbc}"')
 
+#     def to_obspy(self, locations):
+#         """
+#         Convert to obspy Channel object
+#     
+#         :param chan: seed channel code
+#         :param locations: dict with keys as location names
+#         """
+#         response = oi_obspy.response(self.instrument.response_stages.to_obspy())
+#         loc_code = self.location_code
+#         try:
+#             location = self.locations[loc_code]
+#         except KeyError:
+#             print(f"location code {loc_code} not found in ")
+#             print("self.locations, valid keys are:")
+#             for key in self.locations.keys():
+#                 print(key)
+#             sys.exit(2)
+#         obspy_lon, obspy_lat = oi_obspy.lon_lats(location)
+#         azi, dip = oi_misc.get_azimuth_dip(
+#             chan["sensor"].seed_codes, chan["orientation_code"])
+#         start_date = self.start_date
+#         end_date = self.end_date
+#         if location.localisation_method in not None:
+#             channel_comment = obspy_util.Comment(
+#                 "Localised using : {}".format(
+#                         location["localisation_method"])
+#             )
+#         else:
+#             channel_comment = None
+#         channel_code = make_channel_code(
+#             chan["sensor"].seed_codes,
+#             chan["band_code"],
+#             chan["inst_code"],
+#             chan["orientation_code"],
+#             chan["datalogger"].sample_rate,
+#         )
+#         start_date = start_date_chan if start_date_chan else start_date
+#         channel = obspy_inventory.channel.Channel(
+#             code=channel_code,
+#             location_code=loc_code,
+#             latitude=obspy_lat,
+#             longitude=obspy_lon,
+#             elevation=obspy_types.FloatWithUncertaintiesAndUnit(
+#                 location["position"]["elev"],
+#                 lower_uncertainty=location["uncertainties.m"]["elev"],
+#                 upper_uncertainty=location["uncertainties.m"]["elev"],
+#             ),
+#             depth=location["depth.m"],
+#             azimuth=obspy_types.FloatWithUncertainties(
+#                 azi[0],
+#                 lower_uncertainty=azi[1] if len(azi) == 2 else 0,
+#                 upper_uncertainty=azi[1] if len(azi) == 2 else 0,
+#             ),
+#             dip=dip[0],
+#             types=["CONTINUOUS", "GEOPHYSICAL"],
+#             sample_rate=chan["datalogger"].sample_rate,
+#             clock_drift_in_seconds_per_sample=1
+#             / (1e8 * float(chan["datalogger"].sample_rate)),
+#             sensor=oi_obspy.equipment(chan["sensor"].equipment),
+#             pre_amplifier=oi_obspy.equipment(
+#                             chan["preamplifier"].equipment)
+#             if "preamplifier" in chan
+#             else None,
+#             data_logger=oi_obspy.equipment(
+#                             chan["datalogger"].equipment),
+#             equipment=None,
+#             response=response,
+#             description=None,
+#             comments=[channel_comment] if channel_comment else None,
+#             start_date=start_date,
+#             end_date=end_date_chan if end_date_chan else end_date,
+#             restricted_status=None,
+#             alternate_code=None,
+#             data_availability=None,
+#         )
+#         return channel
 
+    
 class Instrument(object):
     """
     Instrument Class.
+
+    An instrument is a combination of sensor, optional preamplifier, and
+    datalogger
     """
-    def __init__(self, datalogger, sensor, preamplifier=None):
+    def __init__(self,
+                 datalogger,
+                 sensor,
+                 preamplifier=None,
+                 debug=False):
         """
         :param datalogger: datalogger information
         :type datalogger: ~class `Datalogger`
@@ -256,16 +371,23 @@ class Instrument(object):
         self.seed_band_base_code = sensor.seed_band_base_code
         self.seed_instrument_code = sensor.seed_instrument_code
         self.seed_orientations = sensor.seed_orientations
+        if debug:
+            print('Instrument __init__')
+            print(datalogger)
+            print(sensor)
+            print(preamplifier)
+            print('instrument seed_orientations: {}'.format(
+                self.seed_orientations))
 
-    def __repr__(self):
-        s = f'Instrument({self.datalogger}, {self.sensor}'
-        if self.preamplifier:
-            s += f', {self.preamplifier}'
-        s += ')'
-        return s
+#     def __repr__(self):
+#         s = f'Instrument({self.datalogger}, {self.sensor}'
+#         if self.preamplifier:
+#             s += f', {self.preamplifier}'
+#         s += ')'
+#         return s
 
     @classmethod
-    def from_info_dict(cls, info_dict):
+    def from_info_dict(cls, info_dict, debug=False):
         """
         Create instance from an info_dict
 
@@ -275,6 +397,9 @@ class Instrument(object):
         """
         assert 'datalogger' in info_dict, 'No datalogger specified'
         assert 'sensor' in info_dict, 'No sensor specified'
+        if debug:
+            print("Instrument.from_info_dict")
+            pp.pprint(info_dict)
         obj = cls(Datalogger.from_info_dict(info_dict['datalogger']),
                   Sensor.from_info_dict(info_dict['sensor']),
                   Preamplifier.from_info_dict(info_dict.get('preamplifier',

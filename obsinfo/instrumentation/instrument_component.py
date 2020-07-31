@@ -6,6 +6,7 @@ No StationXML equivalent.
 # Standard library modules
 # import math as m
 import warnings
+import pprint
 
 # Non-standard modules
 from obspy.core.inventory.util import Equipment as obspy_Equipment
@@ -14,73 +15,114 @@ from obspy.core.util.obspy_types import FloatWithUncertaintiesAndUnit as\
 
 from .response_stages import ResponseStages
 
+pp = pprint.PrettyPrinter(depth=2)
+
 
 class InstrumentComponent(object):
     """
     InstrumentComponent superclass.  No obspy equivalent
     """
-    def __init__(self, equipment, response_stages=[],
-                 config_description=''):
+    def __init__(self,
+                 equipment,
+                 response_stages=[]):
         """
         Constructor
         """
         self.equipment = equipment
-        if config_description:
-            self.equipment.description += ('[config: ' + config_description
-                                           + ']')
         self.response_stages = response_stages
 
     @staticmethod
-    def from_info_dict(info_dict):
+    def from_info_dict(info_dict, debug=False):
         """
         Creates an appropriate Instrumnet_component subclass from an info_dict
         """
+        if not info_dict:
+            return None
+        if debug:
+            print('InstrumentComponent info_dict')
+            pp.pprint(info_dict)
         if 'datalogger' in info_dict:
-            obj = Datalogger.from_info_dict(info_dict['datalogger'])
-        elif 'sample_rate' in info_dict:
-            obj = Sensor.from_info_dict(info_dict)
+            info_dict = info_dict['datalogger']
+            cls = Datalogger
         elif 'sensor' in info_dict:
-            obj = Sensor.from_info_dict(info_dict['sensor'])
-        elif 'seed_codes' in info_dict:
-            obj = Sensor.from_info_dict(info_dict)
+            info_dict = info_dict['sensor']
+            cls = Sensor
         elif 'preamplifier' in info_dict:
-            obj = Preamplifier.from_info_dict(info_dict['preamplifier'])
+            info_dict = info_dict['preamplifier']
+            cls = Preamplifier
+        elif 'sample_rate' in info_dict:
+            cls = Datalogger
+        elif 'seed_codes' in info_dict:
+            cls = Sensor
         elif 'equipment' in info_dict:
-            obj = Preamplifier.from_info_dict(info_dict)
+            cls = Preamplifier
         else:
-            warnings.warn('Unknown InstrumentComponent: '
-                          f'"{info_dict}"')
+            warnings.warn(f'Unknown InstrumentComponent: "{info_dict}"')
+
+        if debug:
+            print(cls)
+        if info_dict is None:
+            return None
+        obj = cls.from_info_dict(info_dict)
         return obj
+
+    @staticmethod
+    def _configuration_serialnumber(info_dict, debug=False):
+        """
+        Modify info_dict to account for configuration and serial number
+        """
+        # Standard stuff for all instrument components
+        if not info_dict:
+            return None
+        if "configuration" not in info_dict:
+            return info_dict
+        if debug:
+            print('InstrumentComponent:_configuration_serialnumber info_dict:')
+            pp.pprint(info_dict)
+        configuration = info_dict['configuration']
+        if 'configuration_definitions' in info_dict:
+            info_dict.update(info_dict['configuration_definitions']
+                             [configuration])
+            del info_dict['configuration_definitions']
+        if 'serial_number' in info_dict:
+            serial_number = info_dict['serial_number']
+            if 'serial_number_definitions' in info_dict:
+                if serial_number in info_dict['serial_number_definitions']:
+                    info_dict.update(info_dict['serial_number_definitions']
+                                     [serial_number])
+            info_dict['equipment']['serial_number'] = serial_number
+            del info_dict['serial_number_definitions']
+        info_dict['equipment']['description'] += ' [config: {}]'.format(
+            configuration)
+        return info_dict
 
 
 class Datalogger(InstrumentComponent):
     """
     Datalogger Instrument Component. No obspy equivalent
     """
-    def __init__(self, equipment, sample_rate, response_stages=[],
-                 config_description='', delay_correction=0):
+    def __init__(self, equipment, response_stages,
+                 sample_rate, delay_correction=0):
         self.equipment = equipment
-        if config_description:
-            self._config_description = config_description
-            self.equipment.description += ('[config: ' + config_description
-                                           + ']')
-        self.sample_rate = sample_rate
         self.response_stages = response_stages
+        self.sample_rate = sample_rate
         self.delay_correction = delay_correction
+        
+    def __str__(self):
+        return 'Datalogger: {}, {:d} response stages, {} sps, {} delay correction'.format(
+            self.equipment.model, len(self.response_stages),self.sample_rate,
+            self.delay_correction)
 
     @classmethod
     def from_info_dict(cls, info_dict):
         """
         Create Datalogger instance from an info_dict
         """
-        if not info_dict:
-            return None
-        equipment = info_dict.get('equipment', None)
-        response_stages = info_dict.get('response_stages', None)
-        obj = cls(Equipment.from_info_dict(equipment),
+        info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
+        obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
+                  ResponseStages.from_info_dict(
+                    info_dict.get('response_stages', None)),
                   info_dict.get('sample_rate', None),
-                  ResponseStages.from_info_dict(response_stages),
-                  info_dict.get('config_description', ''),
                   info_dict.get('delay_correction', 0))
         # print(obj)
         return obj
@@ -101,14 +143,20 @@ class Sensor(InstrumentComponent):
     """
     Sensor Instrument Component. No obspy equivalent
     """
-    def __init__(self, equipment, seed_band_base_code, seed_instrument_code,
-                 seed_orientations, response_stages=[],
-                 config_description=''):
+    def __init__(self,
+                 equipment,
+                 response_stages,
+                 seed_band_base_code,
+                 seed_instrument_code,
+                 seed_orientations,
+                 debug=False):
         """
         Constructor
 
         :param equipment: Equipment information
         :type equipment: ~class `obsinfo.instrumnetation.Equipment`
+        :param response stages: sensor response stages
+        :type equipment: ~class `obsinfo.instrumentation.ResponseStages`
         :param seed_band_base_code: SEED base code ("B" or "S") indicating
                                     instrument band.  Must be modified by
                                     obsinfo to correspond to output sample
@@ -122,33 +170,44 @@ class Sensor(InstrumentComponent):
 
         """
         self.equipment = equipment
-        if config_description:
-            self.equipment.description += ('[config: ' + config_description
-                                           + ']')
+        self.response_stages = response_stages
         self.seed_band_base_code = seed_band_base_code
         self.seed_instrument_code = seed_instrument_code
         self.seed_orientations = seed_orientations  # dictionary
-        self.response_stages = response_stages
+        if debug:
+            print('sensor seed_orientations: {}'.format(
+                self.seed_orientations))
+
+    def __str__(self):
+        return 'Sensor: {}, {:d} response stages, seed code(s) {}{}[{}]'.format(
+            self.equipment.model, len(self.response_stages),
+            self.seed_band_base_code, self.seed_instrument_code,
+            ''.join([k for (k,v) in self.seed_orientations.items()]))
 
     @classmethod
-    def from_info_dict(cls, info_dict):
+    def from_info_dict(cls, info_dict, debug=False):
         """
         Create Sensor instance from an info_dict
         """
-        if not info_dict:
-            return None
+        info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
+        if debug:
+            print('Sensor info_dict:')
+            pp.pprint(info_dict)
         seed_dict = info_dict.get('seed_codes', {})
-        orient_dict = seed_dict.get('orientation', {})
         orients = {key: Orientation.from_info_dict(value)
-                   for (key, value) in orient_dict.items()}
-        response_stages = info_dict.get('response_stages', None)
+                   for (key, value)
+                   in seed_dict.get('orientation', {}).items()}
+        if debug:
+            print("sensor seed_codes['orientation']: {}".format(
+                seed_dict.get('orientation', {})))
+            print("orients: {}".format(orients))
         obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
+                  ResponseStages.from_info_dict(
+                    info_dict.get('response_stages', None)),
                   seed_dict.get('band_base', None),
                   seed_dict.get('instrument', None),
-                  orients,
-                  ResponseStages.from_info_dict(response_stages),
-                  info_dict.get('config_description', '')
-                  )
+                  orients)
+        # print(obj)
         return obj
 
     def __repr__(self):
@@ -168,18 +227,21 @@ class Preamplifier(InstrumentComponent):
     """
     Preamplifier Instrument Component. No obspy equivalent
     """
-    def from_info_dict(cls, info_dict=None):
+    @classmethod
+    def from_info_dict(cls, info_dict):
         """
         Create Sensor instance from an info_dict
         """
-        if not info_dict:
-            return None
-        response_stages = info_dict.get('response_stages', None)
+        info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
         obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
-                  ResponseStages.from_info_dict(response_stages),
-                  info_dict.get('config_description', '')
-                  )
+                  ResponseStages.from_info_dict(
+                    info_dict.get('response_stages', None)))
+        # print(obj)
         return obj
+
+    def __str__(self):
+        return 'Preamplifier: {}, {:d} response stages'.format(
+            self.equipment.model, len(self.response_stages))
 
     def __repr__(self):
         s = f'Preamplifier({type(self.equipment)}'

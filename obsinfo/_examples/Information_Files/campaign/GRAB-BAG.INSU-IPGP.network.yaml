@@ -29,7 +29,7 @@ network:
             start_date: "2015-04-23T10:00:00Z"
             end_date: "2016-05-26T23:00:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/SPOBS1.instrumentation.yaml#instrumentation"
@@ -51,7 +51,7 @@ network:
             start_date: "2015-04-23T10:00:00Z"
             end_date: "2016-05-28T15:37:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/BBOBS1_pre2012.instrumentation.yaml#instrumentation"
@@ -74,16 +74,16 @@ network:
             start_date: "2015-04-23T10:00:00Z"
             end_date: "2016-05-28T15:37:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/HYDROCT1.instrumentation.yaml#instrumentation"
                     serial_number: "01"
                     datalogger_config: "250sps"
                     channel_mods:
-                        base:
+                        base_channel:
                             sensor: {base: {$ref: "../instrumentation/sensors/HITECH_HTI04-PLC-ULF.sensor.yaml#sensor"}}
-                        by_das:
+                        das_channels:
                             "1":
                                 location_code: "00"
                                 sensor: {serial_number: "4500"}

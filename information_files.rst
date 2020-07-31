@@ -215,18 +215,8 @@ Configuration Choice Fields (all optional)
                 
     :``base``: `Channel Configuration`_ applied to all channels.
     
-    :``by_orientation``/{ORIENTATION-CODE}: `Channel Configuration`_ applied to
-      individual channels, keyed by their SEED orientation code
-  
-    :``by_das``/{DAS-CODE}: `Channel Configuration`_ applied to individual channels,
-      keyed by their data acquisition system (DAS) code.
-      Use when a station has more than one channel with the same
-      orientation code.
-
     :``by_chan_loc``/{CHAN_LOC}: `Channel Configuration`_ applied to individual
       channels, keyed by their channel and location codes.
-      Alternative to ``by_das``, when it's easier/clearer to write out
-      channel_location codes
 
 --------------------------------------------------------------------------------
 
@@ -348,20 +338,16 @@ Shared fields:
 
 :``equipment``: Corresponds to StationXML Equipment object
   
-:``config_description``: Description of the default configuration.  Can be left
-                       empty if there is only one configuration.
+:``configuration``: Name of the default configuration
 
-:``responses_ordered``: an ordered list of responses (see `Response`_)
+:``response_stages``: an ordered list of responses (see `Response`_)
 
-Configuration Definition Fields
--------------------------------------------------
-
-modifications to the above-mentioned fields (plus any specific to the given
-Instrument Component type).
+:``configuration_definitions``: definitions of different configurations
+    (including modifications/definition of equipment and response_stages,
+    if appropriate) 
     
-:``serial_number_definitions``: serial-number based modifications
-
-:``config_definitions``: optional configurations 
+:``serial_number_definitions``: (optional) serial-number based modifications
+    to the specified configuration
 
 
 Component-specific Fields: 

@@ -16,14 +16,17 @@ sensor:
         description: "Differential Pressure Gauge"
         manufacturer: "various"
         vendor: "various"
-    seed_codes:
-        band_base: "B"
-        instrument: "D"
-        orientation:
-            "H": {azimuth.deg: [0,0], dip.deg: [90,0]}
-            "F": {azimuth.deg: [0,0], dip.deg: [90,0]}
-    response_stages:
-        - $ref: "responses/SIO-LDEO_DPG_generic_theoretical.stage.yaml#stage"
+    configuration: "default"
+    configuration_definitions:
+        "default":
+            seed_codes:
+                band_base: "B"
+                instrument: "D"
+                orientation:
+                    "H": {azimuth.deg: [0,0], dip.deg: [90,0]}
+                    "F": {azimuth.deg: [0,0], dip.deg: [90,0]}
+            response_stages:
+                - $ref: "responses/SIO-LDEO_DPG_generic_theoretical.stage.yaml#stage"
     serial_number_definitions:
         "5004": 
             equipment: {manufacturer: "SIO"}

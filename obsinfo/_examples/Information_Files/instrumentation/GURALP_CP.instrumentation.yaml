@@ -20,20 +20,22 @@ instrumentation:
                 description: "Guralp"
                 manufacturer: "Guralp"
                 vendor: "Guralp"
-            config_description: "100 sps"
-            response_stages:
-                -
-                    description : "Guralp Digitizer"
-                    input_units : { name: "V", description: "Volts"}
-                    output_units : { name: "counts", description: "Digital Counts"}
-                    output_sample_rate: 100
-                    gain : 
-                        frequency: 0
-                        value: 1529051 #  counts/V (from 0.654 uV/ Count)
-                    filter:
-                        type : "ANALOG"
-            sample_rate: 100
-            delay_correction: 0
+            configuration: "100sps"
+            configuration_definitions:
+                "100sps":
+                    response_stages:
+                        -
+                            description : "Guralp Digitizer"
+                            input_units : { name: "V", description: "Volts"}
+                            output_units : { name: "counts", description: "Digital Counts"}
+                            output_sample_rate: 100
+                            gain : 
+                                frequency: 0
+                                value: 1529051 #  counts/V (from 0.654 uV/ Count)
+                            filter:
+                                type : "Analog"
+                    sample_rate: 100
+                    delay_correction: 0
         sensor:
             equipment:
                 model: "?????"
@@ -41,34 +43,37 @@ instrumentation:
                 description: "Guralp SPOBS acceleration sensor"
                 manufacturer: "Guralp"
                 vendor: "Guralp"
-            seed_codes:
-                band_base: "S"
-                instrument: "H"
-                orientation:
-                    "3": {azimuth.deg: [0,0],    dip.deg: [90,0]}
-                    "1": {azimuth.deg: [0,180],  dip.deg: [0,0]}
-                    "2": {azimuth.deg: [90,180], dip.deg: [0,0]}
-            response_stages:
-                -
-                  description : "Guralp SPOBS seismometer" # optionel
-                  input_units :  {name: "m/s", description: "VELOCITY"}
-                  output_units : {name: "V", description: "VOLTS"}
-                  gain : 
-                    value: 1247.3
-                    frequency: 10
-                  filter:
-                    type: "PolesZeros"
-                    transfer_function_type: "LAPLACE (RADIANS/SECOND)"
-                    zeros:
-                        - [0.0, 0.0]
-                        - [0.0, 0.0]
-                        - [1700, 0.0]
-                    poles:
-                        - [-0.0707, 0.0707]
-                        - [-0.0707, -0.0707]
-                        - [-322.2, 0]
-                        - [-98.00, 130.0]
-                        - [-98.00, -130.0]
+            configuration: "default"
+            configuration_definitions:
+                "default":
+                    seed_codes:
+                        band_base: "S"
+                        instrument: "H"
+                        orientation:
+                            "3": {azimuth.deg: [0,0],    dip.deg: [90,0]}
+                            "1": {azimuth.deg: [0,180],  dip.deg: [0,0]}
+                            "2": {azimuth.deg: [90,180], dip.deg: [0,0]}
+                    response_stages:
+                        -
+                          description : "Guralp SPOBS seismometer" # optionel
+                          input_units :  {name: "m/s", description: "VELOCITY"}
+                          output_units : {name: "V", description: "VOLTS"}
+                          gain : 
+                            value: 1247.3
+                            frequency: 10
+                          filter:
+                            type: "PolesZeros"
+                            transfer_function_type: "LAPLACE (RADIANS/SECOND)"
+                            zeros:
+                                - [0.0, 0.0]
+                                - [0.0, 0.0]
+                                - [1700, 0.0]
+                            poles:
+                                - [-0.0707, 0.0707]
+                                - [-0.0707, -0.0707]
+                                - [-322.2, 0]
+                                - [-98.00, 130.0]
+                                - [-98.00, -130.0]
     das_channels:
         "1":
             orientation_code : "H"

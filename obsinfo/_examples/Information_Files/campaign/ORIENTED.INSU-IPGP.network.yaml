@@ -30,15 +30,15 @@ network:
             start_date: "2015-04-22T12:00:00Z"
             end_date: "2016-05-28T21:01:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/SPOBS2.instrumentation.yaml#instrumentation"
                     datalogger_config: "125sps"
                     serial_number: "20"
                     channel_mods:
-                        by_orientation:
-                            '1': {azimuth.deg: [33, 5]}
+                        das_channels:
+                            '3': {azimuth.deg: [33, 5]}
                             '2': {azimuth.deg: [123, 5]}
             locations:
                 "00":
@@ -56,7 +56,7 @@ network:
             start_date: "2015-04-22T12:00:00Z"
             end_date: "2016-05-28T21:01:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base:
                         $ref: "../instrumentation/SPOBS2.instrumentation.yaml#instrumentation"
@@ -64,9 +64,9 @@ network:
                         datalogger_config: "125sps"
                         serial_number: "12"
                         channel_mods:
-                            base: {datalogger: {config: "125sps"}}
-                            by_orientation:
-                                '1': {azimuth.deg: [154, 7]}
+                            base_channel: {datalogger: {config: "125sps"}}
+                            das_channels:
+                                '3': {azimuth.deg: [154, 7]}
                                 '2': {azimuth.deg: [244, 7]}
             locations:
                 "00":

@@ -22,7 +22,7 @@ network:
             start_date: "2015-04-23T10:00:00"
             end_date: "2016-05-28T15:37:00"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base: {$ref: "../instrumentation/BBOBS1_2012+.instrumentation.yaml#instrumentation"}
                     datalogger_config: "62.5sps"
@@ -45,16 +45,16 @@ network:
             start_date: "2015-04-23T10:00:00Z"
             end_date: "2016-05-28T15:37:00Z"
             location_code: "00"
-            instruments:
+            instrumentations_configs:
                 -
                     base: {$ref: "../instrumentation/BBOBS1_2012+.instrumentation.yaml#instrumentation"}
                     datalogger_config: "62.5sps"
                     serial_number: "07"
                     channel_mods:
-                        base:
+                        base_channel:
                             sensor: {serial_number: "Sphere06"}
-                        by_orientation:
-                            "H": {sensor: {serial_number : "IP007"}}
+                        das_channels:
+                            "4": {sensor: {serial_number : "IP007"}}
             locations:
                 "00":
                     base: {$ref: 'location_bases/BUC_DROP.location_base.yaml#location_base'}

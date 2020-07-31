@@ -11,12 +11,15 @@ sensor:
         description: "Trillium Compact in single-sided mode (negative shorted to ground)"
         manufacturer: "Nanometrics, Inc"
         vendor: "Nanometrics, Inc"
-    seed_codes:
-        band_base: "B"
-        instrument: "H"
-        orientation:
-            "Z": {azimuth.deg: [0, 0],    dip.deg: [-90, 0]}
-            "1": {azimuth.deg: [0, 180],  dip.deg: [0, 0]}
-            "2": {azimuth.deg: [90, 180], dip.deg: [0, 0]}
-    response_stages:
-        - $ref: "responses/Trillium_TCompact_singlesided_theoretical.stage.yaml#stage"
+    configuration: "SINGLE-SIDED"
+    configuration_definitions:
+        "SINGLE-SIDED":
+            seed_codes:
+                band_base: "B"
+                instrument: "H"
+                orientation:
+                    "Z": {azimuth.deg: [0, 0],    dip.deg: [-90, 0]}
+                    "1": {azimuth.deg: [0, 180],  dip.deg: [0, 0]}
+                    "2": {azimuth.deg: [90, 180], dip.deg: [0, 0]}
+            response_stages:
+                - $ref: "responses/Trillium_TCompact_singlesided_theoretical.stage.yaml#stage"

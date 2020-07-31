@@ -13,22 +13,9 @@ datalogger:
         description: "CS5321/22 delta-sigma A/D converter + FIR digital filter"
         manufacturer: "Cirrus Logic"
         vendor: "various"
-    config_description: "125 sps"
-    response_stages:
-        - $ref: "responses/CS5321_FIR1.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
-        - $ref: "responses/CS5322_FIR3.stage.yaml#stage"
-    sample_rate: 125
-    delay_correction: 0.232
+    configuration: "125sps"
     configuration_definitions:
         "62.5sps":
-            config_description: "62.5 sps"
             sample_rate: 62.5
             delay_correction: 0.464
             response_stages:
@@ -43,7 +30,6 @@ datalogger:
                 - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
                 - $ref: "responses/CS5322_FIR3.stage.yaml#stage"
         "125sps":
-            config_description: "125 sps"
             sample_rate: 125
             delay_correction: 0.232
             response_stages:
@@ -57,7 +43,6 @@ datalogger:
                 - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
                 - $ref: "responses/CS5322_FIR3.stage.yaml#stage"
         "250sps":
-            config_description: "250 sps"
             sample_rate: 250
             delay_correction: 0.116
             response_stages:
@@ -70,7 +55,6 @@ datalogger:
                 - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
                 - $ref: "responses/CS5322_FIR3.stage.yaml#stage"
         "500sps":
-            config_description: "500 sps"
             sample_rate: 500
             delay_correction: 0.058
             response_stages:
@@ -82,7 +66,6 @@ datalogger:
                 - $ref: "responses/CS5322_FIR2.stage.yaml#stage"
                 - $ref: "responses/CS5322_FIR3.stage.yaml#stage"
         "1000sps":
-            config_description: "1000 sps"
             sample_rate: 1000
             delay_correction: 0.029
             response_stages:
