@@ -256,21 +256,25 @@ class Channel(object):
         else:
             raise NameError(f'Unknown band base code: "{bbc}"')
 
-#     def to_obspy(self, locations):
+#     def to_obspy(self, locations, orientation_code):
 #         """
 #         Convert to obspy Channel object
 #     
 #         :param chan: seed channel code
 #         :param locations: dict with keys as location names
+#         :param orientation_code:  the orientation code to use for this
+#             Channel.  Must correspond to one of the keys in
+#             Channel.seed_orientations.  None only works only if
+#             len(seed_orientation)==1
 #         """
-#         response = oi_obspy.response(self.instrument.response_stages.to_obspy())
+#         response = self.instrument.response_stages.to_obspy()
 #         loc_code = self.location_code
 #         try:
-#             location = self.locations[loc_code]
+#             location = locations[loc_code]
 #         except KeyError:
 #             print(f"location code {loc_code} not found in ")
-#             print("self.locations, valid keys are:")
-#             for key in self.locations.keys():
+#             print("locations, valid keys are:")
+#             for key in locations.keys():
 #                 print(key)
 #             sys.exit(2)
 #         obspy_lon, obspy_lat = oi_obspy.lon_lats(location)
