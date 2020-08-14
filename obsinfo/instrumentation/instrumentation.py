@@ -16,6 +16,8 @@ import pprint
 from .instrument_component import (InstrumentComponent, Datalogger, Sensor,
                                    Preamplifier)
 from ..info_dict import InfoDict
+from ..misc import misc as oi_misc
+from ..misc import obspy_routines as oi_obspy
 
 pp = pprint.PrettyPrinter(indent=4, depth=4, width=80)
 
@@ -278,7 +280,7 @@ class Channel(object):
 #                 print(key)
 #             sys.exit(2)
 #         obspy_lon, obspy_lat = oi_obspy.lon_lats(location)
-#         azi, dip = oi_misc.get_azimuth_dip(
+#         azi, dip = self.get_azimuth_dip(orientation_code)
 #             chan["sensor"].seed_codes, chan["orientation_code"])
 #         start_date = self.start_date
 #         end_date = self.end_date
@@ -336,6 +338,21 @@ class Channel(object):
 #             data_availability=None,
 #         )
 #         return channel
+
+    def get_azimuth_dip(self, orientation_code):
+        " Returns azimuth and dip [value, error] pairs "
+
+        if orientation_code in self.instrument.seed_orientations:
+            azimuth = channel_seed_codes["orientation"][orientation_code]["azimuth.deg"]
+            azimuth = [float(x) for x in azimuth]
+            dip = channel_seed_codes["orientation"][orientation_code]["dip.deg"]
+            dip = [float(x) for x in dip]
+        else:
+            raise NameError(
+                'orientation code "{}" not found in '
+                "component seed_codes.orientation".format(orientation_code)
+            )
+        return azimuth, dip
 
     
 class Instrument(object):

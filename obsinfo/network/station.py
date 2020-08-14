@@ -4,11 +4,10 @@ Station class
 # Standard library modules
 
 # Non-standard modules
-import obspy.core.inventory.util as obspy_util
-
+# import obspy.core.inventory.util as obspy_util
+#
 # obsinfo modules
-from ..instrumentation import (Instrumentation, Instrument,
-                               InstrumentationConfiguration)
+from ..instrumentation import InstrumentationConfiguration
 # from ..misc import obspy_routines as oi_obspy
 
 
@@ -63,26 +62,26 @@ class Station(object):
         """
         Create Station instance from an info_dict
         """
-        obj = cls(info_dict['site'],
-                  info_dict['start_date'],
-                  info_dict['end_date'],
-                  info_dict['location_code'],
-                  {c: Location.from_info_dict(v)
-                      for c, v in info_dict['locations'].items()},
-                  [InstrumentationConfiguration.from_info_dict(x).to_Instrumentation()
-                      for x in info_dict['instrumentations_configs']],
-                  Processing.from_info_dict(info_dict.get('processing',
-                                                          None)),
-                  info_dict.get('restricted_status', None),
-                  info_dict.get('commments', [])
-                 )
+        obj = cls(
+            info_dict['site'],
+            info_dict['start_date'],
+            info_dict['end_date'],
+            info_dict['location_code'],
+            {c: Location.from_info_dict(v)
+                for c, v in info_dict['locations'].items()},
+            [InstrumentationConfiguration.from_info_dict(x).
+             to_Instrumentation() for x in
+             info_dict['instrumentations_configs']],
+            Processing.from_info_dict(info_dict.get('processing', None)),
+            info_dict.get('restricted_status', None),
+            info_dict.get('commments', []))
         return obj
 
     def __repr__(self):
         s = f'Station({self.site}, {self.start_date}, {self.end_date}, '
         s += f'{self.location_code}, '
         s += f'{len(self.locations)} {type(Location)}s, '
-        s += f'{len(self.instrumentations)} {type(Instrumentation)}s'
+        s += f'{len(self.instrumentations)} {type(self.instrumentations)}s'
         if self.processing:
             s += f', {len(self.processing)} processing-steps'
         if not self.restricted_stations == "unknown":
@@ -110,10 +109,10 @@ class Station(object):
 #             print("No valid location code for station, either ", end='')
 #             print("set station location_code or provide a location '00'")
 #             sys.exit()
-# 
+#
 #         obspy_comments = oi_obspy.comments(self.comments, self.processing,
 #                                            station_loc_code, sta_loc)
-# 
+#
 #         # DEFINE Operator
 #         agency = self.operator["full_name"]
 #         contacts = None
@@ -121,7 +120,7 @@ class Station(object):
 #             contacts = [obspy_util.Person(emails=[self.operator["email"]])]
 #         website = self.operator.get("website", None)
 #         operator = obspy_util.Operator([agency], contacts, website)
-# 
+#
 #         # print(obspy_comments)
 #         sta = obspy_inventory.station.Station(
 #             code=self.code,
@@ -136,7 +135,8 @@ class Station(object):
 #             site=obspy_util.Site(getattr(self, "site", "")),
 #             vault=sta_loc.vault,
 #             geology=sta_loc.geology,
-#             equipments=[x.equipment.to_obspy() for x in self.instrumentations],
+#             equipments=[x.equipment.to_obspy()
+#                         for x in self.instrumentations],
 #             operators=[operator],
 #             creation_date=self.start_date,  # Needed to write StationXML
 #             termination_date=self.end_date,
