@@ -33,7 +33,7 @@ class InstrumentComponent(object):
     @staticmethod
     def from_info_dict(info_dict, debug=False):
         """
-        Creates an appropriate Instrumnet_component subclass from an info_dict
+        Create instance from an info_dict
         """
         if not info_dict:
             return None
@@ -72,6 +72,7 @@ class InstrumentComponent(object):
         """
         # Standard stuff for all instrument components
         if not info_dict:
+            warnings.warn('received empty info_dict')
             return None
         if debug:
             print('in instrument_component._configuration_serialnumber')
@@ -140,7 +141,7 @@ class Datalogger(InstrumentComponent):
     @classmethod
     def from_info_dict(cls, info_dict):
         """
-        Create Datalogger instance from an info_dict
+        Create instance from an info_dict
         """
         info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
         obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
@@ -211,7 +212,7 @@ class Sensor(InstrumentComponent):
     @classmethod
     def from_info_dict(cls, info_dict, debug=False):
         """
-        Create Sensor instance from an info_dict
+        Create instance from an info_dict
         """
         info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
         if debug:
@@ -254,8 +255,10 @@ class Preamplifier(InstrumentComponent):
     @classmethod
     def from_info_dict(cls, info_dict):
         """
-        Create Sensor instance from an info_dict
+        Create instance from an info_dict
         """
+        if info_dict is None:
+            return None
         info_dict = InstrumentComponent._configuration_serialnumber(info_dict)
         obj = cls(Equipment.from_info_dict(info_dict.get('equipment', None)),
                   ResponseStages.from_info_dict(

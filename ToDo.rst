@@ -13,13 +13,11 @@ ____________
 Major
 ____________
 
-- Allow info_dict to drill down inside nested lists
-- Change "station" to include code (and "network" to have list of stations)?
 - Only allow "$ref" as oneOf choice at network (and instrumentation?) level(s)
-- Only allow specification of configurations at network (and instrumentation?) levels
 - ?json-schema more levels? (one per "class") to allow more file validations
-- **Have all levels below network (& instrumentation?) always do full jsonref read?**
-    - or have validation provide a one-line error message for unresolvable jsonrefs
+- make instrumentaion have "configuration" and "configuration_definition"
+  (like instrument_components)
+- move filter obspy creation to filter.py
 - Put "file_fields" description in descriptions.schema.json
   - each schema file will open with 
 '''
@@ -44,11 +42,9 @@ ____________
 Allow user to specify complete instruments for a network
 ------------------------------------------------------------
 
- - Allowing instrument-components file specification in network files?
  - Create  sample network files with gain configs entered
  - Create another with full instrument (but still around a base instrument
    that at least indicates the datalogger)
- - Should we allow a simple "gain" entry?  Or do we put this as the datalogger config
 
 Make a ``obsinfo-example-dir`` console script
 ------------------------------------------------------------

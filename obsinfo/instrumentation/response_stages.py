@@ -128,7 +128,7 @@ class ResponseStages():
         obj = self._add_sensitivity(obj)
         return obj
 
-    def _add_sensitivity(self, obspy_resp):
+    def _add_sensitivity(self, obspy_resp, debug=False):
         """
         Adds sensitivity to an obspy Response object
 
@@ -151,6 +151,10 @@ class ResponseStages():
             input_units_description=self.stages[0].input_units_description,
             output_units_description=self.stages[-1].output_units_description
             )
+        if debug:
+            print(sensitivity, obspy_resp)
+            for stage in obspy_resp.response_stages:
+                print(stage)
         obspy_resp.instrument_sensitivity = sensitivity
         obspy_resp.recalculate_overall_sensitivity(sensitivity.frequency)
         obspy_resp.instrument_sensitivity.input_units = true_input_units

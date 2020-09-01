@@ -225,7 +225,8 @@
                 "start_sync_reference" :  {"$ref": "definitions.schema.json#/date-time-Z" },
                 "start_sync_instrument" : {"$ref": "#/definitions/start_sync_instrument" },
                 "end_sync_reference" :    {"$ref": "definitions.schema.json#/date-time-Z" },
-                "end_sync_instrument" :   {"$ref": "definitions.schema.json#/date-time-Z" }
+                "end_sync_instrument" :   {"$ref": "definitions.schema.json#/date-time-Z" },
+                "already_applied":        {"type": "boolean"}
             },
             "additionalProperties" : false
         },

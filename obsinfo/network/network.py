@@ -12,6 +12,7 @@ from obspy.core.inventory import Inventory as obspyInventory
 from ..misc import obspy_routines
 from .facility import Facility
 from .station import Station
+from ..misc.info_files import read_info_file
 
 
 class Network(object):
@@ -146,3 +147,34 @@ class Network(object):
             inv.write(fname, "STATIONXML")
             fnames.append(fname)
         return fnames
+
+def make_stationXML_script(argv=None):
+    """
+    Creates StationXML files from a network file and instrumentation file tree
+    """
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(prog="obsinfo-makeSTATIONXML", description=__doc__)
+    parser.add_argument("network_file", help="Network information file")
+    parser.add_argument("-d", "--dest_path",
+                        help="Destination folder for StationXML files")
+    parser.add_argument("-q", "--quiet", action="store_true",
+                        help="Run silently")
+    # parser.add_argument( '-v', '--verbose',action="store_true",
+    #            help='increase output verbosiy')
+
+    args = parser.parse_args(argv)
+
+    if args.dest_path:
+        if not os.path.exists(args.dest_path):
+            os.mkdir(args.dest_path)
+
+    # READ IN NETWORK INFORMATION
+    A = read_info_file(args.network_file)
+    # print(A['network'])
+    net = Network.from_info_dict(A['network'])
+    # print(net)
+
+    fnames = net.to_stationXML(destination_folder=args.dest_path)
+    if not args.quiet:
+        print('Wrote to ' + ', '.join(fnames))

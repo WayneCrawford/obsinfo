@@ -75,6 +75,7 @@
             "required" : ["value", "frequency"],
             "properties" : {
                 "value" : {"type" : "number"},
+                "notes" :             {"$ref" : "definitions.schema.json#/note_list"},
                 "frequency" : {
                     "type" : "number",
                     "description": "Hz",

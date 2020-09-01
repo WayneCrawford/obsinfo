@@ -194,7 +194,6 @@ class Coefficients(Filter):
                                           "DIGITAL"]:
             warnings.warn('Illegal transfer function type: "{}"'.format(
                 transfer_function_type))
-        # self.type = 'Coefficients'
         self.transfer_function_type = transfer_function_type
         self.numerator_coefficients = numerator_coefficients
         self.denominator_coefficients = denominator_coefficients
@@ -221,7 +220,14 @@ class ResponseList(Filter):
     ResponseList Filter
     """
     def __init__(self, response_list):
-        # self.type = 'Coefficients'
+        """
+        :param response_list: list of [freq, gain, phase]
+        :kind response_list: list of 3-lists
+        """
+        assert len(response_list) > 2,\
+            'response_list must have at least two elements'
+        for element in response_list:
+            assert len(element)==3, 'response_list element does not have 3 items'
         self.response_list = response_list
 
     @classmethod
@@ -229,7 +235,7 @@ class ResponseList(Filter):
         """
         Create PolesZeros instance from an info_dict
         """
-        obj = cls(info_dict.get('response_list', []))
+        obj = cls(info_dict['elements'])
         return obj
 
     def __repr__(self):
@@ -266,7 +272,6 @@ class Digital(Coefficients):
     Digital Filter (Flat Coefficients filter)
     """
     def __init__(self):
-        # self.type = 'Coefficients'
         self.transfer_function_type = 'DIGITAL'
         self.numerator_coefficients = [1.0]
         self.denominator_coefficients = []
@@ -288,7 +293,6 @@ class AD_Conversion(Coefficients):
     AD_Conversion Filter (Flat Coefficients filter)
     """
     def __init__(self, input_full_scale, output_full_scale):
-        # self.type = 'AD_Conversion'
         self.transfer_function_type = 'DIGITAL'
         self.numerator_coefficients = [1.0]
         self.denominator_coefficients = []

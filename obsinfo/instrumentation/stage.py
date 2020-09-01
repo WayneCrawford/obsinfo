@@ -8,7 +8,8 @@ import warnings
 from obspy.core.inventory.response import (PolesZerosResponseStage,
                                            FIRResponseStage,
                                            CoefficientsTypeResponseStage,
-                                           ResponseListResponseStage)
+                                           ResponseListResponseStage,
+                                           ResponseListElement)
 from obspy.core.inventory.response import Response as obspy_Response
 from obspy.core.inventory.response import InstrumentSensitivity\
                                    as obspy_Sensitivity
@@ -79,6 +80,8 @@ class Stage():
     def offset(self):
         """
         offset in samples corresponding to the delay
+        
+        must be an integer
         """
         if hasattr(self.filter, 'delay_samples'):
             return self.filter.delay_samples
@@ -86,7 +89,7 @@ class Stage():
             if self.input_sample_rate is None:
                 return 0
             else:
-                return self.delay * self.input_sample_rate
+                return int(self.delay * self.input_sample_rate)
 
     # @input_sample_rate.setter
     # def input_sample_rate(self, x):
@@ -120,6 +123,8 @@ class Stage():
     def to_obspy(self):
         """
         Return equivalent obspy response stage
+        
+        The actual conversion to obspy filter types should be handled in filter.py
         """
 
         filt = self.filter
@@ -128,23 +133,26 @@ class Stage():
                 self.delay = filt.delay_samples/self.input_sample_rate
             elif self.delay != filt.delay_samples/self.input_sample_rate:
                 warnings.warn("stage delay does not equal filter delay samples")
-        args = (self.stage_sequence_number, self.gain, self.gain_frequency,
-                self.input_units, self.output_units)
+        args = (self.stage_sequence_number,
+                self.gain,
+                self.gain_frequency,
+                self.input_units,
+                self.output_units)
+        kwargs = dict(name=self.name,
+                      input_units_description=self.input_units_description,
+                      output_units_description=self.output_units_description,
+                      description=self.description,
+                      decimation_input_sample_rate=self.input_sample_rate,
+                      decimation_factor=self.decimation_factor,
+                      decimation_offset=self.offset,
+                      decimation_delay=self.delay,
+                      decimation_correction=self.correction)
         if isinstance(filt, PolesZeros) or isinstance(filt, Analog):
             if not filt.normalization_frequency:
                 filt.normalization_frequency = self.gain_frequency
             obj = PolesZerosResponseStage(
                 *args,
-                name=self.name,
-                input_units_description=self.input_units_description,
-                output_units_description=self.output_units_description,
-                description=self.description,
-                decimation_input_sample_rate=self.input_sample_rate,
-                decimation_factor=self.decimation_factor,
-                decimation_offset=self.offset,
-                decimation_delay=self.delay,
-                decimation_correction=self.correction,
-                # PolesZeros-specific
+                **kwargs,
                 pz_transfer_function_type=filt.transfer_function_type,
                 normalization_frequency=filt.normalization_frequency,
                 zeros=[obspy_types.ComplexWithUncertainties(
@@ -157,16 +165,7 @@ class Stage():
         elif isinstance(filt, FIR):
             obj = FIRResponseStage(
                 *args,
-                name=self.name,
-                input_units_description=self.input_units_description,
-                output_units_description=self.output_units_description,
-                description=self.description,
-                decimation_input_sample_rate=self.input_sample_rate,
-                decimation_factor=self.decimation_factor,
-                decimation_offset=self.offset,
-                decimation_delay=self.delay,
-                decimation_correction=self.correction,
-                # FIR-specific
+                **kwargs,
                 symmetry=filt.symmetry,
                 coefficients=[obspy_types.FloatWithUncertaintiesAndUnit(
                     c / filt.coefficient_divisor)
@@ -176,17 +175,7 @@ class Stage():
                 or isinstance(filt, AD_Conversion)):
             obj = CoefficientsTypeResponseStage(
                 *args,
-                name=self.name,
-                input_units_description=self.input_units_description,
-                output_units_description=self.output_units_description,
-                description=self.description,
-                decimation_input_sample_rate=self.input_sample_rate,
-                decimation_factor=self.decimation_factor,
-                decimation_offset=self.offset,
-                decimation_delay=self.delay,
-                decimation_correction=self.correction,
-                # FIR-specific
-                # CF-specific
+                **kwargs,
                 cf_transfer_function_type=filt.transfer_function_type,
                 numerator=[obspy_types.FloatWithUncertaintiesAndUnit(
                     n, lower_uncertainty=0.0, upper_uncertainty=0.0)\
@@ -195,19 +184,12 @@ class Stage():
                     n, lower_uncertainty=0.0, upper_uncertainty=0.0)\
                     for n in filt.denominator_coefficients])
         elif isinstance(filt, ResponseList):
+            response_list_elements = [ResponseListElement(x[0],x[1],x[2])
+                                      for x in filt.response_list]
             obj = ResponseListResponseStage(
                 *args,
-                name=self.name,
-                input_units_description=self.input_units_description,
-                output_units_description=self.output_units_description,
-                description=self.description,
-                decimation_input_sample_rate=self.input_sample_rate,
-                decimation_factor=self.decimation_factor,
-                decimation_offset=self.offset,
-                decimation_delay=self.delay,
-                decimation_correction=self.correction,
-                # ResponeList-specific
-                response_list_elements=filt.response_list)
+                **kwargs,
+                response_list_elements=response_list_elements)
         else:
             warnings.warn(f'Unhandled response stage type: "{filt.type}"')
         return obj

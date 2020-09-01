@@ -28,7 +28,7 @@ setuptools.setup(
         'console_scripts': [
             'obsinfo-validate=obsinfo.misc.info_files:_validate_script',
             'obsinfo-print=obsinfo.misc.print:_print_script',
-            # 'obsinfo-makeSTATIONXML=obsinfo.network.network:_make_stationXML_script',
+            'obsinfo-makeSTATIONXML=obsinfo.network.network:make_stationXML_script',
             'obsinfo-make_SDPCHAIN_scripts=obsinfo.addons.SDPCHAIN:_console_script',
             'obsinfo-make_LCHEAPO_scripts=obsinfo.addons.LCHEAPO:_console_script'
         ]
