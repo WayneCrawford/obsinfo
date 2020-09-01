@@ -205,7 +205,7 @@
                     "clock_correct_linear_drift": {"$ref": "#/definitions/clock_correction_linear"},
                     "clock_correct_leapsecond":   {"$ref": "#/definitions/clock_correction_leapsecond"}
                 },
-                "additionalProperties" : true
+                "additionalProperties" : false
             }
         },
         "clock_correction_linear": {

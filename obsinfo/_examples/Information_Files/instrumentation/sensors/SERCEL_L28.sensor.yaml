@@ -13,7 +13,6 @@ sensor:
         type: "Geophone"
         description: "Sercel L-28LB 4.5 Hz 3C geophone, 395 ohm coil and 2490 ohm shunt"
         manufacturer: "Sercel"
-        vendor: "various"
     configuration: "C395_S2490"
     configuration_definitions:
         "C395_S2490":

@@ -9,6 +9,6 @@ stage:
     documentation: "OBS Transfer Functions_WCC.doc"
   gain : 
     value: 29.0
-    frequency: 10
+    frequency: 10.0
   filter: 
     $ref: "PolesZeros/Sercel_L22D_C510-S2000_generic.filter.yaml#filter"

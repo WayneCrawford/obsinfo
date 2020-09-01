@@ -12,14 +12,16 @@ revision:
 network:
     facility:
         reference_name: "INSU-IPGP"
-        full_name: "INSU-IPGP OBS Park"
+        full_name: "INSU-IPGP OBS facility"
+        email: "parc-obs@services.cnrs.fr"
+        website: "https://parc-obs.insu.cnrs.fr/"
     campaign_ref_name: "SPOBS"
     network_info:
         code: "4G"
         name: "Short period OBSs"
         start_date: "2007-07-01"
         end_date: "2025-12-31"
-        description: "Short period OBS network example"
+        description: "EMSO-MOMAR"
         comments: ["Lucky Strike Volcano, North Mid-Atlantic Ridge"]
     stations:
         "LSVW":
@@ -38,7 +40,7 @@ network:
                     base: {$ref: 'location_bases/SURFACE_DROP.location_base.yaml#location_base'}
                     position: {lon: -32.32504, lat: 37.29744, elev: -2030}
             processing:
-                - clock_correction_linear_drift:
+                - clock_correct_linear_drift:
                     <<: *LINEAR_CLOCK_DEFAULTS
                     start_sync_reference: "2015-04-21T21:06:00Z"
                     end_sync_reference: "2016-05-28T20:59:00.32Z"

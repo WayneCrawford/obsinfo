@@ -23,14 +23,14 @@
     "definitions": {
         "preamplifier" : {
             "description": "Basic preamplifier specification",
-            "required": ["equipment", "configuration"],
+            "required": ["equipment", "configuration", "configuration_definitions"],
             "properties": {
                 "configuration":      {"type": "string"},
                 "notes":              {"$ref": "definitions.schema.json#/note_list"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType" },
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
                 "configuration_definitions": {"$ref": "#/definitions/preamplifier_configs_map"},
-                "serial_number_definitions": {"$ref": "#/definitions/preamplifier_serial_numbers_map"}
+                "serial_number_modifications": {"$ref": "#/definitions/preamplifier_serial_numbers_map"}
             },
             "additionalProperties": false
         },

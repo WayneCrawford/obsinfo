@@ -44,7 +44,9 @@
             "required" : [ "reference_name" ],
             "properties" : {
                 "reference_name":  {"$ref": "definitions.schema.json#/reference_name"},
-                "full_name": {"type": "string" ,  "description": "Full facility name"}
+                "full_name": {"type": "string", "description": "Full facility name"},
+                "email":     {"type": "string", "description": "Facility email"},
+                "website":   {"type": "string", "description": "Facility website"}
             },
             "additionalProperties" : false
         },

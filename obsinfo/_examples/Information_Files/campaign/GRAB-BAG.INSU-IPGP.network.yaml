@@ -62,8 +62,7 @@ network:
                     base: {$ref: 'location_bases/BUC_DROP.location_base.yaml#location_base'}
                     position: {lon: -32.29756, lat: 37.26049, elev: -1887}
             processing:
-                - clock_corrections:
-                    linear_drift:
+                - clock_correct_linear_drift:
                         <<: *LINEAR_CLOCK_DEFAULTS
                         start_sync_reference: "2015-04-22T12:24:00Z"
                         end_sync_reference: "2016-05-28T15:35:00.3660Z"

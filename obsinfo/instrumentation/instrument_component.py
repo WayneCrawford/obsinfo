@@ -9,11 +9,10 @@ import warnings
 import pprint
 
 # Non-standard modules
-from obspy.core.inventory.util import Equipment as obspy_Equipment
-from obspy.core.util.obspy_types import FloatWithUncertaintiesAndUnit as\
-    obspy_FloatWithUncertaintiesAndUnit
 
 from .response_stages import ResponseStages
+from .equipment import Equipment
+from .orientation import Orientation
 
 pp = pprint.PrettyPrinter(depth=2)
 
@@ -74,44 +73,69 @@ class InstrumentComponent(object):
         # Standard stuff for all instrument components
         if not info_dict:
             return None
-        if "configuration" not in info_dict:
-            return info_dict
         if debug:
+            print('in instrument_component._configuration_serialnumber')
+            print('BEFORE BEFORE')
+            pp.pprint(info_dict)
             print('InstrumentComponent:_configuration_serialnumber info_dict:')
             pp.pprint(info_dict)
-        configuration = info_dict['configuration']
-        if 'configuration_definitions' in info_dict:
-            info_dict.update(info_dict['configuration_definitions']
-                             [configuration])
-            del info_dict['configuration_definitions']
+        config = info_dict.get('configuration', None)
+        if config:
+            if config not in info_dict.get('configuration_definitions',{}):
+                warnings.warn(f'configuration "{config}" not in instrument '
+                              f'component configuration_definitions '
+                              f'"{pp.pprint(info_dict)}"')
+            else:
+                info_dict.update(info_dict['configuration_definitions']
+                                          [config])
+                info_dict['equipment']['description'] += ' [{}]'.format(config)
         if 'serial_number' in info_dict:
             serial_number = info_dict['serial_number']
-            if 'serial_number_definitions' in info_dict:
-                if serial_number in info_dict['serial_number_definitions']:
-                    info_dict.update(info_dict['serial_number_definitions']
-                                     [serial_number])
             info_dict['equipment']['serial_number'] = serial_number
-            del info_dict['serial_number_definitions']
-        info_dict['equipment']['description'] += ' [config: {}]'.format(
-            configuration)
+            SNM = info_dict.get('serial_number_modifications', {})
+            if serial_number in SNM:
+                if debug:
+                    print('BEFORE')
+                    pp.pprint(info_dict)
+                info_dict.update(SNM[serial_number])
+                if debug:
+                    print('AFTER')
+                    pp.pprint(info_dict)
+            assert 'equipment' in info_dict,\
+                f'no equipment in info_dict: {pp.pprint(info_dict)}'
         return info_dict
 
 
 class Datalogger(InstrumentComponent):
     """
-    Datalogger Instrument Component. No obspy equivalent
+    Datalogger Instrument Component
     """
-    def __init__(self, equipment, response_stages,
-                 sample_rate, delay_correction=0):
+    def __init__(self,
+                 equipment,
+                 response_stages,
+                 sample_rate, 
+                 delay_correction=0):
+        """
+        Constructor
+        
+        :param equipment: description of the Datalogger
+        :kind equipment: ~class Equipment
+        :param response_stages: ordered response stages
+        :kind response_stages: ~class ResponseStages
+        :param sample_rate: data sample rate (samples per second)
+        :kind sample_rate: float
+        :param delay_correction: time correction applied to the data time stamp
+        :kind delay_correction: float, optional
+        """
         self.equipment = equipment
         self.response_stages = response_stages
         self.sample_rate = sample_rate
         self.delay_correction = delay_correction
-        
+
     def __str__(self):
-        return 'Datalogger: {}, {:d} response stages, {} sps, {} delay correction'.format(
-            self.equipment.model, len(self.response_stages),self.sample_rate,
-            self.delay_correction)
+        return 'Datalogger: {}, {:d} resp stages, {} sps, {} delay corr'.\
+            format(self.equipment.model, len(self.response_stages),
+                   self.sample_rate, self.delay_correction)
 
     @classmethod
     def from_info_dict(cls, info_dict):
@@ -141,7 +165,7 @@ class Datalogger(InstrumentComponent):
 
 class Sensor(InstrumentComponent):
     """
-    Sensor Instrument Component. No obspy equivalent
+    Sensor Instrument Component
     """
     def __init__(self,
                  equipment,
@@ -179,10 +203,10 @@ class Sensor(InstrumentComponent):
                 self.seed_orientations))
 
     def __str__(self):
-        return 'Sensor: {}, {:d} response stages, seed code(s) {}{}[{}]'.format(
+        return 'Sensor: {}, {:d} resp stages, seed code(s) {}{}[{}]'.format(
             self.equipment.model, len(self.response_stages),
             self.seed_band_base_code, self.seed_instrument_code,
-            ''.join([k for (k,v) in self.seed_orientations.items()]))
+            ''.join([k for (k, v) in self.seed_orientations.items()]))
 
     @classmethod
     def from_info_dict(cls, info_dict, debug=False):
@@ -211,7 +235,7 @@ class Sensor(InstrumentComponent):
         return obj
 
     def __repr__(self):
-        s = 'Datalogger({}, "{}", "{}", {}x{}'.format(
+        s = 'Sensor({}, "{}", "{}", {}x{}'.format(
             type(self.equipment), self.seed_band_base_code,
             self.seed_instrument_code, len(self.seed_orientations),
             type(self.seed_orientations))
@@ -225,7 +249,7 @@ class Sensor(InstrumentComponent):
 
 class Preamplifier(InstrumentComponent):
     """
-    Preamplifier Instrument Component. No obspy equivalent
+    Preamplifier Instrument Component
     """
     @classmethod
     def from_info_dict(cls, info_dict):
@@ -251,73 +275,3 @@ class Preamplifier(InstrumentComponent):
             s += f', config_description={self.config_description}'
         s += ')'
         return s
-
-
-class Equipment(obspy_Equipment):
-    """
-    Equipment class.
-
-    Equivalent to obspy.core.inventory.util.Equipment
-    """
-    def __init__(self, type, description, manufacturer, model,
-                 vendor=None, serial_number=None, installation_date=None,
-                 removal_date=None, calibration_dates=None):
-        self.type = type
-        self.description = description
-        self.manufacturer = manufacturer
-        self.model = model
-        self.vendor = vendor
-        self.serial_number = serial_number
-        self.installation_date = installation_date
-        self.removal_date = removal_date
-        self.calibration_dates = calibration_dates or []
-        self.resource_id = None
-
-    @classmethod
-    def from_info_dict(cls, info_dict):
-        """
-        Create Equipment instance from an info_dict
-        """
-        obj = cls(info_dict.get('type', None),
-                  info_dict.get('description', None),
-                  info_dict.get('manufacturer', None),
-                  info_dict.get('model', None),
-                  info_dict.get('vendor', None),
-                  info_dict.get('serial_number', None),
-                  calibration_dates=info_dict.get('calibration_dates', None)
-                  )
-        return obj
-
-    def to_obspy(self):
-        return self
-
-
-class Orientation(object):
-    """
-    Class for sensor orientations
-    """
-    def __init__(self, azimuth, azimuth_uncertainty, dip, dip_uncertainty):
-        """
-        Constructor
-
-        :param azimuth: azimuth (clockwise from north, degrees)
-        :param azimuth_uncertainty: degrees
-        :param dip: dip (degrees, -90 to 90: positive=down, negative=up)
-        :param dip_uncertainty: degrees
-        """
-        self.azimuth = obspy_FloatWithUncertaintiesAndUnit(
-            azimuth, lower_uncertainty=azimuth_uncertainty,
-            upper_uncertainty=azimuth_uncertainty, unit='degrees')
-        self.dip = obspy_FloatWithUncertaintiesAndUnit(
-            dip, lower_uncertainty=dip_uncertainty,
-            upper_uncertainty=dip_uncertainty, unit='degrees')
-
-    @classmethod
-    def from_info_dict(cls, info_dict):
-        """
-        Create Orientation instance from an info_dict
-        """
-        azimuth, azi_uncert = info_dict.get('azimuth.deg', [None, None])
-        dip, dip_uncert = info_dict.get('dip.deg', [None, None])
-        obj = cls(azimuth, azi_uncert, dip, dip_uncert)
-        return obj

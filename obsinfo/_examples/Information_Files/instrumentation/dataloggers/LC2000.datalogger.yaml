@@ -12,7 +12,6 @@ datalogger:
         type: "delta-sigma A/D converter + digital filter"
         description: "CS5321/22 delta-sigma A/D converter + FIR digital filter"
         manufacturer: "Cirrus Logic"
-        vendor: "various"
     configuration: "125sps"
     configuration_definitions:
         "62.5sps":

@@ -5,8 +5,8 @@ stage:
     input_units : {name: "V", description: "VOLTS"}
     output_units : {name: "V", description: "VOLTS"}
     gain : 
-        value : 128
-        frequency : 10
+        value : 128.0
+        frequency : 10.0
     filter :
         type : "PolesZeros"
         transfer_function_type: "LAPLACE (RADIANS/SECOND)"

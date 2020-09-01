@@ -16,7 +16,6 @@ sensor:
                 HiTech HTI-90-U hydrophone with integrated preamp,
                 serial number 220xxx, 0.05-2500 Hz
         manufacturer: "HiTech, inc"
-        vendor: "various"
     configuration: "SIO_20s"
     configuration_definitions:
         "SIO_20s":

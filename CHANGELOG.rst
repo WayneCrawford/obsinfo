@@ -1,5 +1,8 @@
 v0.107
 -----
+Huge amount of changes to implement full configuration.
+Significant changes to and objectization of Python code.
+
 - ``delay_correction`` moved from ``response:decimation_info``
   to ``instrument_components:configurations:{config}``
 

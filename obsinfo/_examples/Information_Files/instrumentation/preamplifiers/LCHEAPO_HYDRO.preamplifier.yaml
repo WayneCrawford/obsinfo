@@ -11,7 +11,7 @@ preamplifier:
         description: "SIO gain/filter card, hydro channel"
         manufacturer: "SIO or IPGP"
         vendor: ~
-    configuration: "64x"
+    configuration: "32x"
     configuration_definitions:
         "16x":
             response_stages:

@@ -8,12 +8,14 @@ sensor:
     equipment:
         model: "Trillium T240"
         type: "Broadband seismometer"
-        description: "Trillium T240 seismomter, single-sided connection (negative shorted to ground)"
+        description: "Trillium T240 seismometer"
         manufacturer: "Nanometrics, Inc"
         vendor: "Nanometrics, Inc"
     configuration: "SINGLE-SIDED"
     configuration_definitions:
         "SINGLE-SIDED":
+            equipment:
+                description: "Trillium T240 seismometer, negative shorted to ground"
             seed_codes:
                 band_base: "B"
                 instrument: "H"
@@ -23,7 +25,7 @@ sensor:
                     "2": {azimuth.deg: [90, 180], dip.deg: [0, 0]}
             response_stages:
                 - $ref: "responses/Trillium_T240_SN1-399-singlesided_theoretical.stage.yaml#stage"
-    serial_number_definitions:
+    serial_number_modifications:
         "132": {}
         "133": {}
         "134": {}

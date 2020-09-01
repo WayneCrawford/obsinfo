@@ -53,7 +53,7 @@ class PolesZeros(Filter):
     """
     def __init__(self, transfer_function_type='LAPLACE (RADIANS/SECOND)',
                  poles=[], zeros=[],
-                 normalization_frequency=1., normalization_factor=None):
+                 normalization_frequency=None, normalization_factor=None):
         """
         poles and zeros should be lists of complex numbers
         """
@@ -62,10 +62,29 @@ class PolesZeros(Filter):
         self.poles = poles
         self.zeros = zeros
         self.normalization_frequency = normalization_frequency
-        if normalization_frequency and not normalization_factor:
+        self.normalization_factor = self._set_normalization_factor(
+            normalization_factor)
+
+    def _set_normalization_factor(self, given_factor):
+        """
+        Set the normalization factor based on what was input
+    
+        :param given_factor: given normalization factor
+        """
+        warn_pct = 2
+        if self.normalization_frequency:
             self.normalization_factor = self.calc_normalization_factor()
+            if given_factor:
+                if abs((self.normalization_factor - given_factor)
+                       / given_factor) > warn_pct/100.:
+                    warning.warn('given normalization factor > '
+                                 '{:g}% different than calculated ({:g} vs {:g})'
+                                 .format(warn_pct, given_factor,
+                                         self.normalization_factor))
+        elif given_factor is None:
+            self.normalization_factor=1
         else:
-            self.normalization_factor = normalization_factor
+            self.normalization_factor=given_factor
 
     @classmethod
     def from_info_dict(cls, info_dict):
@@ -78,7 +97,7 @@ class PolesZeros(Filter):
                    for x in info_dict.get('poles', [])],
                   [(float(x[0]) + 1j*float(x[1]))
                    for x in info_dict.get('zeros', [])],
-                  info_dict.get('normalization_frequency', 1.),
+                  info_dict.get('normalization_frequency', None),
                   info_dict.get('normalization_factor', None))
         return obj
 
@@ -103,7 +122,10 @@ class PolesZeros(Filter):
                 i*f     if the transfer funtion is in Hertz
         """
         if not self.normalization_frequency:
-            return None
+            if len(self.poles) > 0 or len(self.zeros) > 0:
+                warnings.warn('No normalization frequency: could not '
+                              'calculate normalization factor')
+            return 1.
 
         A0 = 1.0 + (1j * 0.0)
         if self.transfer_function_type == "LAPLACE (HERTZ)":
@@ -146,10 +168,10 @@ class FIR(Filter):
         """
         Create PolesZeros instance from an info_dict
         """
-        obj = cls(info_dict.get('symmetry', 'NONE'),
-                  info_dict.get('delay_samples', None),
-                  info_dict.get('coefficients', []),
-                  info_dict.get('coefficient_divisor', 1.))
+        obj = cls(symmetry=info_dict.get('symmetry', 'NONE'),
+                  delay_samples=info_dict.get('delay.samples', None),
+                  coefficients=info_dict.get('coefficients', []),
+                  coefficient_divisor=info_dict.get('coefficient_divisor', 1.))
         return obj
 
     def __repr__(self):
@@ -220,10 +242,11 @@ class Analog(PolesZeros):
     """
     def __init__(self):
         # self.type = 'Analog'
+        self.transfer_function_type='LAPLACE (RADIANS/SECOND)'
         self.units = 'rad/s'
         self.poles = []
         self.zeros = []
-        self.normalization_frequency = 0
+        self.normalization_frequency = None
         self.normalization_factor = 1.
 
     @classmethod

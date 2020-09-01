@@ -12,7 +12,9 @@ revision:
 network:
     facility:
         reference_name: "INSU-IPGP"
-        full_name: "INSU-IPGP OBS Park"
+        full_name: "INSU-IPGP OBS facility"
+        email: "parc-obs@services.cnrs.fr"
+        website: "https://parc-obs.insu.cnrs.fr/"
     campaign_ref_name: "MYCAMPAIGN"
     network_info:
         $ref: "EMSO-MOMAR.network_info.yaml#network_info"
@@ -32,13 +34,12 @@ network:
                     base: {$ref: 'location_bases/BUC_DROP.location_base.yaml#location_base'}
                     position: {lon: -32.234, lat: 37.2806, elev: -1950}
             processing:
-                - clock_corrections:
-                    linear_drift:
-                        <<: *LINEAR_CLOCK_DEFAULTS
-                        start_sync_reference: "2015-04-23T11:20:00"
-                        start_sync_instrument: 0
-                        end_sync_reference: "2016-05-27T14:00:00.2450"
-                        end_sync_instrument: "22016-05-27T14:00:00"
+                - clock_correct_linear_drift:
+                    <<: *LINEAR_CLOCK_DEFAULTS
+                    start_sync_reference: "2015-04-23T11:20:00"
+                    start_sync_instrument: 0
+                    end_sync_reference: "2016-05-27T14:00:00.2450"
+                    end_sync_instrument: "2016-05-27T14:00:00"
         "BB_2":
             notes: ["An example of changing the sensor"]
             site: "My other favorite site"
@@ -61,8 +62,8 @@ network:
                     position: {lon: -32.29756, lat: 37.26049, elev: -1887}
             processing:
                 - clock_correct_linear_drift:
-                        <<: *LINEAR_CLOCK_DEFAULTS
-                        start_sync_reference: "2015-04-22T12:24:00"
-                        start_sync_instrument: 0
-                        end_sync_reference: "2016-05-28T15:35:00.3660"
-                        end_sync_instrument: "2016-05-28T15:35:02"
+                    <<: *LINEAR_CLOCK_DEFAULTS
+                    start_sync_reference: "2015-04-22T12:24:00"
+                    start_sync_instrument: 0
+                    end_sync_reference: "2016-05-28T15:35:00.3660"
+                    end_sync_instrument: "2016-05-28T15:35:02"

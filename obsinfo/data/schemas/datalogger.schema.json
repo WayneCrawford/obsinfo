@@ -23,7 +23,7 @@
     "definitions": {
         "datalogger" : {
             "description": "Basic datalogger specification",
-            "required": ["configuration"],
+            "required": ["equipment", "configuration", "configuration_definitions"],
             "properties": {
                 "notes":              {"$ref": "definitions.schema.json#/note_list"},
                 "equipment":          {"$ref": "definitions.schema.json#/equipmentType"},
@@ -33,7 +33,7 @@
                 "serial_numbers":     {"$ref": "#/definitions/datalogger_serial_numbers_map"},
                 "configuration":      {"type": "string"},
                 "configuration_definitions": {"$ref": "#/definitions/datalogger_configs_map"},
-                "serial_number_definitions": {"$ref": "#/definitions/datalogger_configs_map"}
+                "serial_number_modifications": {"$ref": "#/definitions/datalogger_configs_map"}
             },
             "additionalProperties": false
         },

@@ -31,7 +31,7 @@
                 "response_stages":    {"$ref": "response_stages.schema.json#/definitions/response_stages" },
                 "seed_codes":         {"$ref": "#/definitions/seed_codes"},
                 "configuration_definitions": {"$ref": "#/definitions/sensor_configs_map"},
-                "serial_number_definitions": {"$ref": "#/definitions/sensor_serial_numbers_map"},
+                "serial_number_modifications": {"$ref": "#/definitions/sensor_serial_numbers_map"},
             },
             "additionalProperties": false
         },

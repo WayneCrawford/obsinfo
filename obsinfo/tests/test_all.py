@@ -11,9 +11,9 @@ import os
 import glob
 import unittest
 import inspect
-# from pprint import pprint
-# import xml.etree.ElementTree as ET
-# from CompareXMLTree import XmlTree
+import pprint
+import xml.etree.ElementTree as ET
+from CompareXMLTree import XmlTree
 # from obsinfo.network.network import _make_stationXML_script
 from obsinfo.misc.info_files import (validate, _read_json_yaml_ref,
                                      read_info_file)
@@ -22,8 +22,9 @@ from obsinfo.info_dict import InfoDict
 from obsinfo.instrumentation import (Instrumentation, InstrumentComponent,
                                      Datalogger, Sensor,
                                      ResponseStages, Stage, Filter)
-# from obsinfo.instrumentation import Preamplifier
-from obsinfo.network import (Station)
+from obsinfo.network import (Network, Station, Facility)
+
+pp = pprint.PrettyPrinter(indent=4)
 
 
 class TestADDONSMethods(unittest.TestCase):
@@ -101,6 +102,296 @@ class TestADDONSMethods(unittest.TestCase):
             )
         os.remove('temp')
 
+    def test_InfoDict_update(self):
+        """
+        Test InfoDict.update()
+        """
+        A = InfoDict(a=1, b=dict(c=2, d=3))
+        A.update(dict(b=dict(d=4, e=5)))
+        self.assertTrue(A == InfoDict(a=1, b=dict(c=2, d=4, e=5)))
+
+    def test_InfoDict_update_list(self):
+        """
+        Test InfoDict.update() for a list
+        """
+        A = InfoDict(a=1, b=[1, 2, 3, 4, 5])
+        A.update(dict(b=[None, None, 99]))
+        self.assertTrue(A == InfoDict(a=1, b=[1, 2, 99, 4, 5]))
+
+    def test_InfoDict_daschannels(self):
+        """
+        Test InfoDict.complete_das_channels()
+        """
+        A = InfoDict(base_channel=dict(a=1, b=dict(c=2, d=3)),
+                     das_channels={'1': dict(b=dict(c=5)), '2': dict(a=4)})
+        A = Instrumentation._complete_das_channels(A)
+        self.assertTrue(
+            A == InfoDict(
+                das_channels={'1': dict(a=1, b=dict(c=5, d=3)),
+                              '2': dict(a=4, b=dict(c=2, d=3))}))
+
+    def test_InfoDict_complicated(self, debug=False):
+        """
+        Test InfoDict.complete_das_channels()
+        """
+        mydict = {
+            'base_channel': {
+                'datalogger': {
+                    'configuration': '125sps',
+                    'configuration_definitions': 'BLAH',
+                    'equipment': 'EQUIPMENT'},
+                'datalogger_config': '62.5sps',
+                'preamplifier': {
+                    'configuration': '1x',
+                    'configuration_definitions': 'BLAH2',
+                    'equipment': 'EQUIPMENT2'},
+                'preamplifier_config': '0.225x',
+                'sensor': {
+                    'configuration': 'SINGLE-SIDED',
+                    'configuration_definitions': 'BLAH3',
+                    'equipment': 'EQUIPMENT3'}},
+            'das_channels': {
+                '1': {'orientation_code': '2'},
+                '2': {'orientation_code': '1'},
+                '3': {
+                    'orientation_code': 'Z',
+                    'preamplifier_config': '1x'},
+                '4': {
+                    'orientation_code': 'H',
+                    'preamplifier': {
+                        'configuration': 'default',
+                        'configuration_definitions': {
+                            'default': {
+                                'response_stages': [
+                                    {
+                                        'description':
+                                            'PREAMPLIFIER - DPG card',
+                                        'extras': {
+                                            'DBIRD_response_type':
+                                                'THEORETICAL'},
+                                        'filter': {
+                                            'poles': [[   -0.0484, 0],
+                                                      [   -57.471, 0],
+                                                      [   -100.0, 0]],
+                                            'transfer_function_type':
+                                                'LAPLACE (RADIANS/SECOND)',
+                                            'type': 'PolesZeros',
+                                             'zeros': [[0, 0]]},
+                                        'gain': {'frequency': 1, 'value': 1},
+                                        'input_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'},
+                                        'output_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'}
+                                    }
+                                ]
+                            }
+                        },
+                        'equipment': 'EQUIPMENT_4_PRE'
+                    },
+                    'sensor': {
+                        'configuration': 'default',
+                        'configuration_definitions': {
+                            'default': {
+                                'response_stages': [
+                                    {
+                                        'description':
+                                            'SENSOR - GENERIC DPG',
+                                        'extras': {
+                                            'DBIRD_response_type': 'THEORETICAL'},
+                                        'filter': {
+                                            'poles': [[-0.0182, 0.0],
+                                                      [-0.05,   0.0]],
+                                            'transfer_function_type':
+                                                'LAPLACE (RADIANS/SECOND)',
+                                            'type': 'PolesZeros',
+                                            'zeros': [[0.0, 0.0],
+                                                      [0.0, 0.0]]},
+                                        'gain': {
+                                            'frequency': 1.0,
+                                            'value': 0.000425},
+                                        'input_units': {
+                                            'description': 'PRESSURE',
+                                            'name': 'Pa'},
+                                        'output_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'}
+                                    }
+                                ],
+                                'seed_codes': {
+                                    'band_base': 'B',
+                                    'instrument': 'D',
+                                    'orientation': {
+                                        'F': {
+                                            'azimuth.deg': [0, 0],
+                                            'dip.deg': [90, 0]},
+                                        'H': {
+                                            'azimuth.deg': [0, 0],
+                                            'dip.deg': [90, 0]}}
+                                }
+                            }
+                        },
+                        'equipment': 'EQUIPMENT_4',
+                        'notes': 'MYNOTES'}}
+            },
+            'equipment': {
+                'description': 'LCHEAPO 2000 BBOBS 2012-present',
+                'manufacturer': 'Scripps Inst. Oceanography - INSU',
+                'model': 'BBOBS1',
+                'serial_number': '07',
+                'type': 'Broadband Ocean Bottom Seismometer',
+                'vendor': 'Scripps Inst. Oceanography - UNSU'},
+            'facility': {
+                'email': 'obs@ipgp.fr',
+                'full_name': 'INSU-IPGP OBS facility',
+                'reference_name': 'INSU-IPGP',
+                'website': 'http://parc-obs.insu.cnrs.fr'}
+        }
+        A = InfoDict(mydict)
+        modifier = {
+            'base_channel': {
+                'datalogger': {'serial_number': '27'},
+                'preamplifier': {'serial_number': '27'},
+                'sensor': {'serial_number': 'Sphere07'}
+            },
+            'das_channels': {
+                '4': {'sensor': {'serial_number': '4527'}}
+            }
+        }
+        mydictB = {
+            'base_channel': {
+                'datalogger': {
+                    'configuration': '125sps',
+                    'configuration_definitions': 'BLAH',
+                    'serial_number': '27',
+                    'equipment': 'EQUIPMENT'},
+                'datalogger_config': '62.5sps',
+                'preamplifier': {
+                    'configuration': '1x',
+                    'configuration_definitions': 'BLAH2',
+                    'serial_number': '27',
+                    'equipment': 'EQUIPMENT2'},
+                'preamplifier_config': '0.225x',
+                'sensor': {
+                    'configuration': 'SINGLE-SIDED',
+                    'configuration_definitions': 'BLAH3',
+                    'serial_number': 'Sphere07',
+                    'equipment': 'EQUIPMENT3'}},
+            'das_channels': {
+                '1': {'orientation_code': '2'},
+                '2': {'orientation_code': '1'},
+                '3': {
+                    'orientation_code': 'Z',
+                    'preamplifier_config': '1x'},
+                '4': {
+                    'orientation_code': 'H',
+                    'preamplifier': {
+                        'configuration': 'default',
+                        'configuration_definitions': {
+                            'default': {
+                                'response_stages': [
+                                    {
+                                        'description':
+                                            'PREAMPLIFIER - DPG card',
+                                        'extras': {
+                                            'DBIRD_response_type':
+                                                'THEORETICAL'},
+                                        'filter': {
+                                            'poles': [[   -0.0484, 0],
+                                                      [   -57.471, 0],
+                                                      [   -100.0, 0]],
+                                            'transfer_function_type':
+                                                'LAPLACE (RADIANS/SECOND)',
+                                            'type': 'PolesZeros',
+                                             'zeros': [[0, 0]]},
+                                        'gain': {'frequency': 1, 'value': 1},
+                                        'input_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'},
+                                        'output_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'}
+                                    }
+                                ]
+                            }
+                        },
+                        'equipment': 'EQUIPMENT_4_PRE'
+                    },
+                    'sensor': {
+                        'configuration': 'default',
+                        'serial_number': '4527',
+                        'configuration_definitions': {
+                            'default': {
+                                'response_stages': [
+                                    {
+                                        'description':
+                                            'SENSOR - GENERIC DPG',
+                                        'extras': {
+                                            'DBIRD_response_type': 'THEORETICAL'},
+                                        'filter': {
+                                            'poles': [[-0.0182, 0.0],
+                                                      [-0.05,   0.0]],
+                                            'transfer_function_type':
+                                                'LAPLACE (RADIANS/SECOND)',
+                                            'type': 'PolesZeros',
+                                            'zeros': [[0.0, 0.0],
+                                                      [0.0, 0.0]]},
+                                        'gain': {
+                                            'frequency': 1.0,
+                                            'value': 0.000425},
+                                        'input_units': {
+                                            'description': 'PRESSURE',
+                                            'name': 'Pa'},
+                                        'output_units': {
+                                            'description': 'VOLTS',
+                                            'name': 'V'}
+                                    }
+                                ],
+                                'seed_codes': {
+                                    'band_base': 'B',
+                                    'instrument': 'D',
+                                    'orientation': {
+                                        'F': {
+                                            'azimuth.deg': [0, 0],
+                                            'dip.deg': [90, 0]},
+                                        'H': {
+                                            'azimuth.deg': [0, 0],
+                                            'dip.deg': [90, 0]}}
+                                }
+                            }
+                        },
+                        'equipment': 'EQUIPMENT_4',
+                        'notes': 'MYNOTES'}}
+            },
+            'equipment': {
+                'description': 'LCHEAPO 2000 BBOBS 2012-present',
+                'manufacturer': 'Scripps Inst. Oceanography - INSU',
+                'model': 'BBOBS1',
+                'serial_number': '07',
+                'type': 'Broadband Ocean Bottom Seismometer',
+                'vendor': 'Scripps Inst. Oceanography - UNSU'},
+            'facility': {
+                'email': 'obs@ipgp.fr',
+                'full_name': 'INSU-IPGP OBS facility',
+                'reference_name': 'INSU-IPGP',
+                'website': 'http://parc-obs.insu.cnrs.fr'}
+        }
+        B=InfoDict(mydictB)
+        if debug:
+            print('BEFORE')
+            pp.pprint(A)
+            print('MODIFIER')
+            pp.pprint(modifier)
+        A.update(modifier)
+        if debug:
+            print('AFTER')
+            pp.pprint(A)
+
+        self.assertTrue(A == B)
+
+    # From here on, cascading tests from the simplest element (filter) to the
+    # most complete (network)
     def test_filter(self):
         """
         Test reading a filter file.
@@ -147,7 +438,7 @@ class TestADDONSMethods(unittest.TestCase):
         obj_A = ResponseStages([Stage.from_info_dict(A['stage'])])
         obj_B = ResponseStages.from_info_dict(B['response_stages'])
         obj = obj_A + obj_B
-        obs_obj = obj.to_obspy()
+        obs_obj = obj.to_obspy(delay_correction=True)
 
     def test_datalogger(self):
         """
@@ -175,6 +466,20 @@ class TestADDONSMethods(unittest.TestCase):
         obj = InstrumentComponent.from_info_dict(A['sensor'])
         obj = Sensor.from_info_dict(A['sensor'])
 
+    def test_channel(self):
+        """
+        Test reading a channel and converting to obspy.
+        """
+        A = read_info_file(os.path.join(
+            self.infofiles_path,
+            "campaign",
+            "TEST.station.yaml"))
+        sta_obj = Station.from_info_dict('MASTATION', A['station'])
+        obj = sta_obj.instrumentations[0].channels[0]
+        # print(obj)
+        obs_obj = obj.to_obspy(sta_obj)
+        # print(obs_obj)
+
     def test_instrumentation(self):
         """
         Test reading instrumentation.
@@ -187,69 +492,64 @@ class TestADDONSMethods(unittest.TestCase):
 
     def test_station(self):
         """
-        Test reading a station.
+        Test reading a station and converting to obspy.
         """
         A = read_info_file(os.path.join(
             self.infofiles_path,
             "campaign",
             "TEST.station.yaml"))
+        obj = Station.from_info_dict('MASTATION', A['station'])
+        obs_obj = obj.to_obspy(Facility(
+            'INSU-IPGP', 'INSU-IPGP OBS Facility',
+            'parc_obs@services.cnrs.fr',
+            'https://parc-obs.insu.cnrs.fr/'))
+
+    def test_network(self):
+        """
+        Test reading a network.
+        """
+        A = read_info_file(os.path.join(
+            self.infofiles_path,
+            "campaign",
+            "SPOBS.INSU-IPGP.network.yaml"))
         # print(A['station'])
-        obj = Station.from_info_dict(A['station'])
-        # obs_obj = obs.to_obspy()
+        obj = Network.from_info_dict(A['network'])
+        obs_obj = obj.to_obspy()
 
-    def test_InfoDict_update(self):
-        """
-        Test InfoDict.update()
-        """
-        A = InfoDict(a=1, b=dict(c=2, d=3))
-        A.update(dict(b=dict(d=4, e=5)))
-        self.assertTrue(A == InfoDict(a=1, b=dict(c=2, d=4, e=5)))
+    def test_makeSTATIONXML_SPOBS(self):
+        self._makeSTATIONXML("SPOBS.INSU-IPGP.network.yaml")
 
-    def test_InfoDict_update_list(self):
-        """
-        Test InfoDict.update() for a list
-        """
-        A = InfoDict(a=1, b=[1, 2, 3, 4, 5])
-        A.update(dict(b=[None, None, 99]))
-        self.assertTrue(A == InfoDict(a=1, b=[1, 2, 99, 4, 5]))
+    def test_makeSTATIONXML_BBOBS(self):
+        self._makeSTATIONXML("BBOBS.INSU-IPGP.network.yaml")
 
-    def test_InfoDict_daschannels(self):
+    def _makeSTATIONXML(self, fname):
         """
-        Test InfoDict.complete_das_channels()
+        Test STATIONXML creation.
         """
-        A = InfoDict(base_channel=dict(a=1, b=dict(c=2, d=3)),
-                     das_channels={'1': dict(b=dict(c=5)), '2': dict(a=4)})
-        A = Instrumentation._complete_das_channels(A)
-        self.assertTrue(
-            A == InfoDict(
-                das_channels={'1': dict(a=1, b=dict(c=5, d=3)),
-                              '2': dict(a=4, b=dict(c=2, d=3))}))
+        net_file = os.path.join(self.infofiles_path, "campaign", fname)
+        # _make_stationXML_script([net_file, "-d", "."])
+        A = read_info_file(net_file)
+        obj = Network.from_info_dict(A['network'])
+        obj.to_stationXML()
 
-#     def test_makeSTATIONXML(self):
-#         """
-#         Test STATIONXML creation.
-#         """
-#         for fname in ["SPOBS.INSU-IPGP.network.yaml",
-#                       "BBOBS.INSU-IPGP.network.yaml"]:
-#             net_file = os.path.join(self.infofiles_path, "campaign", fname)
-#             _make_stationXML_script([net_file, "-d", "."])
-#
-#             compare = XmlTree()
-#             # excluded elements
-#             excludes = ["Created", "Real", "Imaginary", "Numerator",
-#                         "CreationDate", "Description", "Module"]
-#             excludes_attributes = ["startDate", "endDate"]
-#             excludes = [compare.add_ns(x) for x in excludes]
-#
-#             for stxml in glob.glob("*.xml"):
-#                 xml1 = ET.parse(stxml)
-#                 xml2 = ET.parse(os.path.join(self.testing_path, stxml))
-#                 self.assertTrue(compare.xml_compare(
-#                     compare.getroot(xml1), compare.getroot(xml2),
-#                     excludes=excludes,
-#                     excludes_attributes=excludes_attributes))
-#                 os.remove(stxml)
+        compare = XmlTree()
+        # excluded elements
+        excludes = ["Created", "Real", "Imaginary", "Numerator",
+                    "CreationDate", "Description", "Module"]
+        excludes_attributes = ["startDate", "endDate"]
+        excludes = [compare.add_ns(x) for x in excludes]
 
+        for stxml in glob.glob("*.xml"):
+            xml1 = ET.parse(stxml)
+            xml2 = ET.parse(os.path.join(self.testing_path,
+                                         'STATIONXML', stxml))
+            self.assertTrue(compare.xml_compare(
+                compare.getroot(xml1), compare.getroot(xml2),
+                excludes=excludes,
+                excludes_attributes=excludes_attributes))
+            os.remove(stxml)
+
+    # Validate all of the example InfoFiles
     def test_validate_filters(self):
         """
         Test validate filter files

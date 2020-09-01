@@ -35,7 +35,7 @@ network:
                     base: {$ref: 'location_bases/SURFACE_DROP.location_base.yaml#location_base'}
                     position: {lon: -32.32504, lat: 37.29744, elev: -2030}
             processing:
-                - clock_correction_linear_drift:
+                - clock_correct_linear_drift:
                     time_base: "Seascan MCXO, ~1e-8 nominal drift"
                     reference: "GPS"
                     start_sync_instrument: 0

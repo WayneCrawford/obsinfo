@@ -284,9 +284,9 @@ Configuration Definition Fields
 
 Modifications to the above-mentioned fields.
 
-:``config_definitions``: optional configurations 
+:``config_modifications``: optional configurations 
       
-:``serial_number_definitions``: serial number based modifications
+:``serial_number_modifications``: serial number based modifications
    
 
 --------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ Shared fields:
     (including modifications/definition of equipment and response_stages,
     if appropriate) 
     
-:``serial_number_definitions``: (optional) serial-number based modifications
+:``serial_number_modifications``: (optional) serial-number based modifications
     to the specified configuration
 
 

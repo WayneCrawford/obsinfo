@@ -6,7 +6,7 @@ stage:
   output_units : {name: "V", description: "VOLTS"}
   gain : 
     value: 26.6
-    frequency: 10
+    frequency: 10.0
   filter:
     $ref: "PolesZeros/Sercel_L28LB-obs_C395-S2490_generic.filter.yaml#filter"
   extras:

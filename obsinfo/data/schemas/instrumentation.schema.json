@@ -32,8 +32,8 @@
                 "equipment":      {"$ref": "#/definitions/equipmentType"},
                 "base_channel":   {"$ref": "#/definitions/base_channel"},
                 "das_channels":   {"$ref": "#/definitions/das_channels"},
-                "configuration_definitions": {"$ref": "#/definitions/instrument_by_config_or_SN"},
-                "serial_number_definitions": {"$ref": "#/definitions/instrument_by_config_or_SN"}
+                "configuration_modifications": {"$ref": "#/definitions/instrument_by_config_or_SN"},
+                "serial_number_modifications": {"$ref": "#/definitions/instrument_by_config_or_SN"}
             },
             "additionalProperties" : false
         },
@@ -74,7 +74,7 @@
         },
         "base_channel_change_or_modify": { 
             "type": "object",
-            "description": "Base logger channel base and/or modifs",
+            "description": "Base logger channel base and/or modifs NOT USED",
             "required": [],
             "properties" : {
                 "base" :  { "$ref": "#/definitions/base_channel"},
@@ -130,7 +130,7 @@
         },
         "das_channels_change_or_modify": { 
             "type": "object",
-            "description": "DAS channel change and/or modify",
+            "description": "DAS channel change and/or modify NOT USED",
             "properties" : {
                 "base" :  { "$ref": "#/definitions/das_channel"},
                 "modifs": { "$ref": "#/definitions/das_channel_modifs"}
@@ -158,8 +158,8 @@
                     "required": [
                     ],
                     "properties" : {
-                        "base_channel":  {"$ref": "#/definitions/base_channel_change_or_modify"},
-                        "das_channels:": {"$ref": "#/definitions/das_channels_change_or_modify"}
+                        "base_channel":  {"$ref": "#/definitions/base_channel_modifs"},
+                        "das_channels:": {"$ref": "#/definitions/das_channels_modifs"}
                     }
                 }
             }

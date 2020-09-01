@@ -12,8 +12,9 @@ import pprint
 # from .instrument_component import (Datalogger, Sensor, Preamplifier,
 #                                    Equipment, InstrumentComponent)
 from .instrumentation import Instrumentation
+from ..info_dict import InfoDict
 
-pp = pprint.PrettyPrinter(indent=4, depth=2)
+pp = pprint.PrettyPrinter(depth=5, width=170)
 
 
 class InstrumentationConfiguration(object):
@@ -24,8 +25,9 @@ class InstrumentationConfiguration(object):
                  base_inst_dict,
                  config=None,
                  serial_number=None,
-                 datalogger_config=None,
                  datalogger_serial_number=None,
+                 preamplifier_serial_number=None,
+                 sensor_serial_number=None,
                  channel_mods=None,
                  debug=False):
         """
@@ -35,8 +37,6 @@ class InstrumentationConfiguration(object):
         :kind base_inst_dict: ~class `obsinfo.InfoDict`
         :param serial_number: instrumentation serial number
         :kind serial_number: str, optional
-        :param datalogger_config: datalogger configuration
-        :kind datalogger_config: str
         :param channel_mods: Modifications to each channel
         :kind channel_mods: ~class
             `obsinfo.instrumentation.ChannelConfigurationSelection`
@@ -45,21 +45,21 @@ class InstrumentationConfiguration(object):
         :kind config: str, optional
         :param datalogger_serial_number: datalogger serial number
         :kind datalogger_serial_number: str, optional
+        :param sensor_serial_number: sensor serial number
+        :kind sensor_serial_number: str, optional
+        :param preamplifier_serial_number: preamplifier serial number
+        :kind preamplifier_serial_number: str, optional
         """
-        self.inst_dict = base_inst_dict
+        self.inst_dict = InfoDict(base_inst_dict)
         if debug:
             print('InstrumentConfiguration.__init__.inst_dict')
             pp.pprint(self.inst_dict)
         self.config = config
         self.serial_number = serial_number
-        self.datalogger_config = datalogger_config
         self.datalogger_serial_number = datalogger_serial_number
+        self.preamplifier_serial_number = preamplifier_serial_number
+        self.sensor_serial_number = sensor_serial_number
         self.channel_mods = channel_mods
-
-        # Assert non-implemented attributes are not called
-        assert config is None, '"config" not implemented'
-        assert datalogger_serial_number is None,\
-            '"datalogger_serial_number" not implemented'
 
     def __repr__(self):
         s = f'InstrumentationConfiguration({type(self.inst_dict)}, '
@@ -75,53 +75,101 @@ class InstrumentationConfiguration(object):
         """
         Create object from an info_dict
         """
+        # Pass down instrument_component configurations to base_channel
+        for s in ['datalogger_config',
+                  'sensor_config',
+                  'preamplifier_config']:
+            if s in info_dict:
+                info_dict['base']['base_channel'][s] = info_dict[s]
+        
+        # Set up short names for some variables
+        SN_dl = info_dict.get('datalogger_serial_number', None)
+        SN_pa = info_dict.get('preamplifier_serial_number', None)
+        SN_ss = info_dict.get('sensor_serial_number', None)
+        channel_mods = ChannelConfigurationSelection.from_info_dict(
+            info_dict.get('channel_mods', None))
+
+        # Make object
         obj = cls(info_dict.get('base', None),
-                  info_dict.get('config', None),
-                  info_dict.get('serial_number', None),
-                  info_dict.get('datalogger_config', None),
-                  info_dict.get('datalogger_serial_number', None),
-                  ChannelConfigurationSelection.from_info_dict(
-                    info_dict.get('channel_mods', None)))
+                  config=info_dict.get('config', None),
+                  serial_number=info_dict.get('serial_number', None),
+                  datalogger_serial_number=SN_dl,
+                  preamplifier_serial_number=SN_pa,
+                  sensor_serial_number=SN_ss,
+                  channel_mods=channel_mods)
         return obj
 
     def to_Instrumentation(self, debug=False):
         """
         Output instrumentation based on configurations and modifications
         """
-        # Need to add in global config and serial number
+        # Global config and serial number
         if self.config:
-            self.inst_dict['configuration'] = self.config
+            assert self.config in self.inst_dict.get('configuration_definitions',[]),\
+                f'Asked for non-existant configuration "{self.config}"'
+            self.inst_dict.update(self.inst_dict['configuration_definitions']
+                                  [self.config])
+            self.inst_dict['equipment']['description'] += ' [{self.config}]'
         if self.serial_number:
-            self.inst_dict['serial_number'] = self.serial_number
-
+            self.inst_dict['equipment']['serial_number'] = self.serial_number
+            # if self.serial_number in self.inst_dict.get(
+            #     'serial_number_modifications', []):
+            try:
+                modifier = self.inst_dict['serial_number_modifications']\
+                    [self.serial_number]
+            except Exception:
+                mod_by_serial_number = False
+            else:
+                mod_by_serial_number = True
+                if debug:
+                    print('in configuration.InstrumentationConfiguration.'
+                           'to_Instrumentation()')
+                    print(f'Modifying for serial number: {self.serial_number}')
+                    print('BEFORE')
+                    pp.pprint(self.inst_dict)
+                    print('MODIFIER')
+                    pp.pprint(modifier)
+                self.inst_dict.update(modifier)
+                if debug:
+                    print('AFTER')
+                    pp.pprint(self.inst_dict)
         # First, apply global configurations
-        if debug:
-            print('InstrumentConfiguration.to_Instrumentation.inst_dict')
-            pp.pprint(self.inst_dict)
+        # if debug:
+        #     print('InstrumentConfiguration.to_Instrumentation.inst_dict')
+        #     pp.pprint(self.inst_dict)
         # Next, apply channel-specific modifications
         if self.channel_mods:
             self.inst_dict = self.channel_mods.apply_base_channel_mods(
                 self.inst_dict)
+        if debug and mod_by_serial_number:
+            print('AFTER BASE CHANNEL MODS')
+            pp.pprint(self.inst_dict)
 
-        if self.datalogger_config:
-            if debug:
-                print("self.inst_dict['base_channel']['datalogger']")
-                pp.pprint(self.inst_dict['base_channel']['datalogger'])
-                print("datalogger_config")
-                print(self.datalogger_config)
-                pp.pprint(self.datalogger_config)
-            self.inst_dict['base_channel']['datalogger']['configuration'] =\
-                self.datalogger_config
+        # Set base_channel serial numbers
         if self.datalogger_serial_number:
             self.inst_dict['base_channel']['datalogger']['serial_number'] =\
                 self.datalogger_serial_number
+        if self.sensor_serial_number:
+            self.inst_dict['base_channel']['sensor']['serial_number'] =\
+                self.sensor_serial_number
+        if self.preamplifier_serial_number:
+            self.inst_dict['base_channel']['preamplifier']['serial_number'] =\
+                self.preamplifier_serial_number
+        if debug and mod_by_serial_number:
+            print('AFTER BASE CHANNEL SERIAL NUMBERS')
+            pp.pprint(self.inst_dict)
+
 
         # Next, apply channel-specific modifications
         if self.channel_mods:
             self.inst_dict = self.channel_mods.apply_das_channel_mods(
                 self.inst_dict)
+        if debug and mod_by_serial_number:
+            print('AFTER DAS CHANNEL MODS')
+            pp.pprint(self.inst_dict)
 
-        return Instrumentation.from_info_dict(self.inst_dict)
+        return Instrumentation.from_info_dict(
+            self.inst_dict, debug=mod_by_serial_number and debug)
 
 
 class ChannelConfigurationSelection(object):
@@ -218,10 +266,10 @@ class ChannelConfiguration(object):
         self.datalogger = datalogger
         self.preamplifier = preamplifier
         # NOT IMPLEMENTED
-        assert location_code is None, '"location_code" not implemented'
-        assert start_date is None, '"start_date" not implemented'
-        assert end_date is None, '"end_date" not implemented'
-        assert azimuth_deg is None, '"end_date" not implemented'
+        self.location_code = location_code
+        self.start_date = start_date
+        self.end_date = end_date
+        self.azimuth_deg = azimuth_deg
 
     @classmethod
     def from_info_dict(cls, info_dict):
@@ -230,13 +278,13 @@ class ChannelConfiguration(object):
         """
         if info_dict is None:
             return None
-        obj = cls(info_dict.get('sensor', None),
-                  info_dict.get('datalogger', None),
-                  info_dict.get('preamplifier', None),
-                  info_dict.get('location_code', None),
-                  info_dict.get('start_date', None),
-                  info_dict.get('end_date', None),
-                  info_dict.get('azimuth.deg', None),
+        obj = cls(sensor=info_dict.get('sensor', None),
+                  datalogger=info_dict.get('datalogger', None),
+                  preamplifier=info_dict.get('preamplifier', None),
+                  location_code=info_dict.get('location_code', None),
+                  start_date=info_dict.get('start_date', None),
+                  end_date=info_dict.get('end_date', None),
+                  azimuth_deg=info_dict.get('azimuth.deg', None),
                   )
         return obj
 
@@ -248,13 +296,11 @@ class ChannelConfiguration(object):
         :kind info_dict: ~class `obsinfo.info_dict.UpDict`
         """
         if self.sensor:
-            info_dict['sensor'] = self.sensor.apply_mods(info_dict['sensor'])
+            info_dict['sensor'].update(self.sensor)
         if self.datalogger:
-            info_dict['datalogger'] =\
-                self.sensor.apply_mods(info_dict['datalogger'])
-        if self.datalogger:
-            info_dict['preamplifier'] =\
-                self.sensor.apply_mods(info_dict['preamplifier'])
+            info_dict['datalogger'].update(self.datalogger)
+        if self.preamplifier:
+            info_dict['preamplifier'].update(self.preamplifier)
         if self.location_code:
             info_dict['location_code'] = self.location_code
         if self.start_date:
