@@ -1,32 +1,34 @@
-""" 
+"""
 Create OCA-JSON object from obs-info network
 """
 import obsinfo
 import json
 
-################################################################################
+
 class network:
     """OCA network description format
-    
-    Now that the instrument_components no longer name the response_stages but
-    give a list instead, will have to deduce the OCA-compatible terms:
+
+    Now that the instrument_components no longer name the response_stages
+    but give a list instead, will have to deduce the OCA-compatible terms:
         - In Sensor: first item is sensor, any other are ana_filts
         - In Preamplifier: any items are ana_filts
-        - In Datalogger: last item is digital_filter, second to last is digitizer,
-            any prior are ana_filts
+        - In Datalogger: last item is digital_filter, second to last is
+            digitizer, any prior are ana_filts
     """
 
     def __init__(self, obs_network, debug=False):
         """
-        Create an OCA network object (contains stations without component details)
+        Create an OCA network object
+
+        Contains stations without component details
         """
         for station_code, station in obs_network.stations.items():
             if debug:
                 print(station_code)
                 print("A:", station.comments)
             station.partial_fill_instrument(
-                obs_network.instrumentation_file, referring_file=obs_network.basepath
-            )
+                obs_network.instrumentation_file,
+                referring_file=obs_network.basepath)
             if debug:
                 print("B:", station.comments)
             # self.stations[station_code]=station
@@ -60,7 +62,8 @@ class network:
     #         return self.dict
 
     def __repr__(self):
-        return "<OCA_Network: fdsn_code={}>".format(self.dict["network"]["fdsn_code"])
+        return "<OCA_Network: fdsn_code={}>".format(
+            self.dict["network"]["fdsn_code"])
 
     def __make_network_header(self, obs_network):
         netinfo = obs_network.network_info
@@ -108,16 +111,19 @@ class network:
             for key, value in obs_station.supplements.items():
                 if debug:
                     print(key)
-                oca_comments.append(json.dumps({key: value}).replace('"', "'"))
+                oca_comments.append(
+                    json.dumps({key: value}).replace('"', "'"))
         if obs_station.clock_corrections:
             for key, value in obs_station.clock_corrections.items():
                 if debug:
                     print(key)
-                oca_comments.append(json.dumps({key: value}).replace('"', "'"))
+                oca_comments.append(
+                    json.dumps({key: value}).replace('"', "'"))
         if debug:
             print("----")
 
-        sta_position = obs_station.locations[obs_station.location_code]["position"]
+        sta_position = obs_station.locations[obs_station.location_code][
+                                             "position"]
         oca_station = {
             "IR_code": obs_station.code,
             "site": obs_station.site,
@@ -153,7 +159,7 @@ class network:
     def __add_devices(self, devices, values, debug=False):
         """
         Find devices or add to dictionary of "installed devices"
-        
+
         devices= existing dictionary of devices
         values = values corresponding to this das_component
         """
@@ -170,18 +176,17 @@ class network:
         sensor["local_depth"] = 0
         sensor["vault"] = "seafloor"
         sensor["config"] = "single"
-        devices, codes["sensor"] = self.__find_append_device(devices, sensor, "sensor")
+        devices, codes["sensor"] = self.__find_append_device(devices, sensor,
+                                                             "sensor")
 
         anafilter = self.__make_devicedict(
-            "anafilter", values["preamplifier"].equipment
-        )
+            "anafilter", values["preamplifier"].equipment)
         devices, codes["anafilter"] = self.__find_append_device(
-            devices, anafilter, "anafilter"
-        )
+            devices, anafilter, "anafilter")
 
         das = self.__make_devicedict("das", values["datalogger"].equipment)
-        devices, codes["das"] = self.__find_append_device(devices, das, "das")
-
+        devices, codes["das"] = self.__find_append_device(devices, das,
+                                                          "das")
         return devices, codes
 
     def __make_devicedict(self, metatype, equipment):
@@ -197,11 +202,11 @@ class network:
         return devicedict
 
     def __find_append_device(self, devices, device, device_name):
-        """ 
-        Find or append device to dictionary of devices 
-    
+        """
+        Find or append device to dictionary of devices
+
         device codes are '{device_name}_N', where N is a counter for
-        that type of device   
+        that type of device
         """
         n_matching_devices = 0
         for device_code, value in devices.items():
@@ -215,9 +220,8 @@ class network:
         devices[device_code] = device
         return devices, device_code
 
-    def __make_channel(
-        self, das_code, device_codes, values, open_date, close_date, debug=False
-    ):
+    def __make_channel(self, das_code, device_codes, values, open_date,
+                       close_date, debug=False):
         if debug:
             print("das_code=", das_code)
             print("device_codes=", device_codes)
@@ -236,10 +240,6 @@ class network:
             if comp_type in values:
                 if debug:
                     print(f"values[{comp_type}]=", values[comp_type])
-        #                 if "analog_filter" in values[comp_type].response_files:
-        #                     ana_filter_list.append(
-        #                         {"analog_filter":values[comp_type].response_files['analog_filter'],
-        #                         "component": "1"})
         ch = {
             "location_code": values["location_code"],
             "seed_code": obsinfo.make_channel_code(

@@ -1,30 +1,27 @@
 """
 Write extraction script for LCHEAPO instruments (proprietary to miniseed)
 """
-import obsinfo
+# import obsinfo
 import obsinfo.network.network as oi_network
 import os.path
+from argparse import ArgumentParser
 
 SEPARATOR_LINE = "\n# " + 60 * "=" + "\n"
 
 
-################################################################################
-def process_script(
-    station,
-    station_dir,
-    distrib_dir,
-    input_dir=".",
-    output_dir="miniseed_basic",
-    include_header=True,
-):
-    """Writes script to transform raw OBS data to miniSEED
+def process_script(station, station_dir, distrib_dir, input_dir=".",
+                   output_dir="miniseed_basic", include_header=True):
+    """
+    Write script to transform raw OBS data to miniSEED
 
-        station:        an obsinfo.station object
-        station_dir:    base directory for the station data
-        distrib_dir:    directory where the lcheapo executables and property files are found
-        input_dir:      directory beneath station_dir for LCHEAPO data ['.']
-        output_dir:     directory beneath station_dir for basic miniseed ['miniseed_basic']
-        include_header: include the header that sets up paths (should be done once)
+    :param station: an obsinfo.station object
+    :param station_dir: base directory for the station data
+    :param distrib_dir: directory where the lcheapo executables and
+        property files are found
+    :param input_dir: directory beneath station_dir for LCHEAPO data
+    :param output_dir: directory beneath station_dir for basic miniseed
+    :param include_header: include the header that sets up paths (should
+        be done once)
     """
     fixed_dir = "lcheapo_fixed"
     s = ""
@@ -38,48 +35,42 @@ def process_script(
     return s
 
 
-############################################################################
 def __header(station_name):
-
     s = "#!/bin/bash\n"
-    s += SEPARATOR_LINE + f'echo "Working on station {station_name}"' + SEPARATOR_LINE
+    s += SEPARATOR_LINE
+    s += f'echo "Working on station {station_name}"'
+    s += SEPARATOR_LINE
     return s
 
 
-############################################################################
 def __setup_variables(distrib_dir, station_dir):
     """
     distrib_dir: directory containing lcheapo bin/ and config/ directories
                 (with lcfix and lc2ms)
     station_dir: base directory for station data files
     """
-
     s = SEPARATOR_LINE + "# LCHEAPO STEPS" + SEPARATOR_LINE
     s += "#  - Set up paths\n"
     s += f"STATION_DIR={station_dir}\n"
     s += f"LCFIX_EXEC={os.path.join(distrib_dir,'bin','lcfix')}\n"
     s += f"LC2MS_EXEC={os.path.join(distrib_dir,'bin','lc2ms')}\n"
-    s += f"LC2MS_CONFIG={os.path.join(distrib_dir,'config','lc2ms.properties')}\n"
+    s += "LC2MS_CONFIG={}\n".format(
+        os.path.join(distrib_dir, 'config', 'lc2ms.properties'))
     s += f"SDPPROCESS_EXEC={os.path.join(distrib_dir,'bin','sdp-process')}\n"
     s += f"MSMOD_EXEC={os.path.join('/opt/iris','bin','msmod')}\n"
     s += f"\n"
     return s
 
 
-############################################################################
 def __lcfix_commands(station, in_path, out_path, in_fnames="*.raw.lch"):
-
     """
-        Write an lc2ms command line
+    Write an lc2ms command line
 
-        Inputs:
-            in_path:       relative path to directory containing input files
-            out_path:      relative path to directory for output files
-            in_fnames:     search string for input files within in_path ['*.fix.lch']
-         Output:
-            string of bash script lines
+    :param in_path: relative path to directory containing input files
+    :param out_path: relative path to directory for output files
+    :param in_fnames: search string for input files within in_path
+    :returns: string of bash script lines
     """
-
     s = f'echo "{"-"*60}"\n'
     s += 'echo "Running LCFIX: Fix common LCHEAPO data bugs"\n'
     s += f'echo "{"-"*60}"\n'
@@ -102,32 +93,21 @@ def __lcfix_commands(station, in_path, out_path, in_fnames="*.raw.lch"):
     return s
 
 
-############################################################################
-def __lc2ms_commands(
-    station,
-    in_path,
-    out_path,
-    in_fnames="*.fix.lch",
-    out_fnames_model="%E.%S.00.%C.%Y.%D.%T.mseed",
-    force_quality_D=True,
-):
-
+def __lc2ms_commands(station, in_path, out_path, in_fnames="*.fix.lch",
+                     out_fnames_model="%E.%S.00.%C.%Y.%D.%T.mseed",
+                     force_quality_D=True):
     """
-        Write an lc2ms command line
+    Write an lc2ms command line
 
-        Inputs:
-            station:       obsinfo station
-            in_path:       relative path to directory containing input files
-            in_fnames:     search string for input files within in_path ['*.fix.lch']
-            out_path:      relative path to directory for output files
-            out_fnames_model: model for output filenames ['%E.%S.00.%C.%Y.%D.%T.mseed']
-                              (should change to '%E.%S.%L.%C.%Y.%D.%T.mseed'
-                               once lc2ms handles location codes)
-            force_quality_D: uses a separate call to msmod to force the data
-                              quality to "D" (should be unecessary once lc2ms is
-                              upgraded)
-        Output:
-            string of bash script lines
+    :param station: obsinfo station
+    :param in_path: relative path to directory containing input files
+    :param in_fnames: search string for input files within in_path
+    :param out_path: relative path to directory for output files
+    :param out_fnames_model: model for output filenames (change to
+        '%E.%S.%L.%C.%Y.%D.%T.mseed' once lc2ms handles location codes)
+    :param force_quality_D: uses a separate call to msmod to force the data
+        quality to "D" (will be unecessary once lc2ms is upgraded)
+    :returns: string of bash script lines
     """
 
     network_code = station.network_code
@@ -167,59 +147,52 @@ def __lc2ms_commands(
     return s
 
 
-################################################################################
 def __force_quality_commands(rel_path, quality="D"):
-    """ Forces miniseed files to have given quality ('D' by default)
+    """
+    Forces miniseed files to have given quality ('D' by default)
     """
     s = f'echo "{"-"*60}"\n'
     s += f'echo "Forcing data quality to {quality}"\n'
     s += f'echo "{"-"*60}"\n'
-    # THE FOLLOWING ASSUMES THAT SDP-PROCESS IS IN OUR PATH, NOT NECESSARILY THE CASE
-    s += f'$SDPPROCESS_EXEC -d $STATION_DIR -c="Forcing data quality to {quality}" --cmd="$MSMOD_EXEC --quality {quality} -i {rel_path}/*.mseed"\n'
-    s += "\n"
+    # THE FOLLOWING ASSUMES THAT SDP-PROCESS IS IN OUR PATH, WHICH IS NOT
+    # NECESSARILY THE CASE
+    s += f'$SDPPROCESS_EXEC -d $STATION_DIR -c="Forcing data quality to '
+    s += f'{quality}" --cmd="$MSMOD_EXEC --quality {quality} '
+    s += '-i {rel_path}/*.mseed"\n\n'
     return s
 
 
-################################################################################
 def _console_script(argv=None):
     """
     Create a bash-script to convert LCHEAPO data to basic miniSEED
     Data should be in station_data_path/{STATION_NAME}/{input_dir}/*.fix.lch
 
     requires O Dewee program lc2ms, and IRIS program msmod
-
     """
-    from argparse import ArgumentParser
-
-    parser = ArgumentParser(
-        prog="obsinfo-make_process_scripts_LC2MS", description=__doc__
-    )
-    parser.add_argument("network_file", help="Network information file")
-    parser.add_argument("station_data_path", help="Base path containing stations data")
-    parser.add_argument("distrib_path", help="Path to lcheapo software distribution")
-    parser.add_argument(
-        "-i",
-        "--input_dir",
-        default=".",
-        help="subdirectory of station_data_path/{STATION}/ containing input *.raw.lch files",
-    )
-    parser.add_argument(
-        "-o",
-        "--output_dir",
-        default="2_miniseed_basic",
-        help="subdirectory of station_data_path/{STATION}/ to put output *.mseed files",
-    )
-    parser.add_argument("--suffix", default="_LC2MS", help="suffix for script filename")
-    parser.add_argument(
-        "--append", action="store_true", help="append to existing script file"
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="increase output verbosity"
-    )
-    parser.add_argument(
-        "--no_header", action="store_true", help="do not include a script header"
-    )
-    parser.add_argument("-q", "--quiet", action="store_true", help="run silently")
+    parser = ArgumentParser(prog="obsinfo-make_process_scripts_LC2MS",
+                            description=__doc__)
+    parser.add_argument("network_file",
+                        help="Network information file")
+    parser.add_argument("station_data_path",
+                        help="Base path containing stations data")
+    parser.add_argument("distrib_path",
+                        help="Path to lcheapo software distribution")
+    parser.add_argument("-i", "--input_dir", default=".",
+                        help="subdirectory of station_data_path/{STATION}/ "
+                             "containing input *.raw.lch files")
+    parser.add_argument("-o", "--output_dir", default="2_miniseed_basic",
+                        help="subdirectory of station_data_path/{STATION}/ "
+                             "to put output *.mseed files")
+    parser.add_argument("--suffix", default="_LC2MS",
+                        help="suffix for script filename")
+    parser.add_argument("--append", action="store_true",
+                        help="append to existing script file")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="increase output verbosity")
+    parser.add_argument("--no_header", action="store_true",
+                        help="do not include a script header")
+    parser.add_argument("-q", "--quiet", action="store_true",
+                        help="run silently")
     args = parser.parse_args()
 
     if not args.quiet:
@@ -227,7 +200,8 @@ def _console_script(argv=None):
     # READ IN NETWORK INFORMATION
     network = oi_network(args.network_file)
     if not args.quiet:
-        print(f"network {network.network_info.code}, stations ", end="", flush=True)
+        print(f"network {network.network_info.code}, stations ", end="",
+              flush=True)
         if args.verbose:
             print("")
 
