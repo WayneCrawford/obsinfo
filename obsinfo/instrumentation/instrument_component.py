@@ -82,7 +82,7 @@ class InstrumentComponent(object):
             pp.pprint(info_dict)
         config = info_dict.get('configuration', None)
         if config:
-            if config not in info_dict.get('configuration_definitions',{}):
+            if config not in info_dict.get('configuration_definitions', {}):
                 warnings.warn(f'configuration "{config}" not in instrument '
                               f'component configuration_definitions '
                               f'"{pp.pprint(info_dict)}"')
@@ -114,11 +114,11 @@ class Datalogger(InstrumentComponent):
     def __init__(self,
                  equipment,
                  response_stages,
-                 sample_rate, 
+                 sample_rate,
                  delay_correction=0):
         """
         Constructor
-        
+
         :param equipment: description of the Datalogger
         :kind equipment: ~class Equipment
         :param response_stages: ordered response stages

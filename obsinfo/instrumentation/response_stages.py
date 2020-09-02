@@ -2,21 +2,21 @@
 Response Stage class
 """
 # Standard library modules
-import warnings
+# import warnings
 
 # Non-standard modules
-from obspy.core.inventory.response import (PolesZerosResponseStage,
-                                           FIRResponseStage,
-                                           CoefficientsTypeResponseStage,
-                                           ResponseListResponseStage)
+# from obspy.core.inventory.response import (PolesZerosResponseStage,
+#                                            FIRResponseStage,
+#                                            CoefficientsTypeResponseStage,
+#                                            ResponseListResponseStage)
 from obspy.core.inventory.response import Response as obspy_Response
 from obspy.core.inventory.response import InstrumentSensitivity\
                                    as obspy_Sensitivity
-import obspy.core.util.obspy_types as obspy_types
+# import obspy.core.util.obspy_types as obspy_types
 
 # Local modules
-from .filter import (Filter, PolesZeros, FIR, Coefficients, ResponseList,
-                     Analog, Digital, AD_Conversion)
+# from .filter import (Filter, PolesZeros, FIR, Coefficients, ResponseList,
+#                      Analog, Digital, AD_Conversion)
 from .stage import Stage
 
 
@@ -102,7 +102,7 @@ class ResponseStages():
     def to_obspy(self, delay_correction):
         """
         Return equivalent obspy response class
-        
+
         :param delay_correction: delay correction :
             if it's a number, zero is applied to all stages and the value is
                 applied to the last stage
@@ -122,7 +122,7 @@ class ResponseStages():
                 self.stages[-1].correction = val
             except ValueError:
                 pass
-            
+
         obj = obspy_Response(
             response_stages=[s.to_obspy() for s in self.stages])
         obj = self._add_sensitivity(obj)

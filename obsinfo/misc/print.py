@@ -1,16 +1,15 @@
-""" 
+"""
 Validate information files
 
 """
 # Standard library modules
 import pprint
-import os.path
-import sys
+# import os.path
+# import sys
 
 # obsinfo modules
 from .info_files import (
     read_json_yaml,
-    get_information_file_format,
     get_information_file_type,
     VALID_TYPES,
     VALID_FORMATS,
@@ -19,15 +18,17 @@ from ..network import Network
 from ..instrumentation import Instrumentation
 from ..instrumentation import Instrument_components
 
-################################################################################
-def print_summary(filename, format=None, type=None, verbose=False, debug=False):
+
+def print_summary(filename, type=None, verbose=False, debug=False):
     """
-    Print a summary of an information file
-    type: "network", "instrumentation","response", "instrument_components","filter"
-    format: "JSON" or "YAML"
-    
-    if type and/or format are not provided, figures them out from the
-    filename, which should be "*{TYPE}.{FORMAT}
+    Print a summary of an information file (JSON or YAML format)
+
+    if type is not provided, figures it out from the filename, which
+    should be "*{TYPE}.{FORMAT}
+
+    :param  type: "network", "instrumentation","response",
+        "instrument_components", or "filter".
+    :kind type: str, optional
     """
 
     if not type:
@@ -53,7 +54,6 @@ def print_summary(filename, format=None, type=None, verbose=False, debug=False):
         _print_summary_other(instance[type])
 
 
-################################################################################
 def _print_summary_network(network, network_file):
     """ Print summary information about a network """
     print(network)
@@ -62,7 +62,6 @@ def _print_summary_network(network, network_file):
     print("")
 
 
-################################################################################
 def _print_summary_instrumentation(instrumentation):
     """ Print summary information about an instrumentation file """
     print(f"FACILITY: {instrumentation.facility['ref_name']}")
@@ -74,13 +73,12 @@ def _print_summary_instrumentation(instrumentation):
     print("INSTRUMENTS:")
     instrumentation.print_elements()
 
-    # VERIFY THAT REFERRED TO FILES EXIST
+    # VERIFY THAT REFERRED-TO FILES EXIST
     print(20 * "=")
     print("Checking dependencies in instrument_components_file: "
           f'"{instrumentation.components_file}"')
-    file_exists, n_components, n_found, n_cites = instrumentation.check_dependencies(
-        print_names=True
-    )
+    file_exists, n_components, n_found, n_cites =\
+        instrumentation.check_dependencies(print_names=True)
     if not file_exists:
         print(
             f"Instrument_Components file not found"
@@ -97,7 +95,6 @@ def _print_summary_instrumentation(instrumentation):
         )
 
 
-################################################################################
 def _print_summary_instrument_components(instance):
     """ Print summary information about an instrument_components file """
     print(f"FORMAT_VERSION: {instance.format_version}")
@@ -128,14 +125,12 @@ def _print_summary_instrument_components(instance):
         )
 
 
-################################################################################
-def _print_summary_other(instance,depth=4):
+def _print_summary_other(instance, depth=4):
     """ Print summary information about a generic information file """
     pp = pprint.PrettyPrinter(indent=1, depth=depth, compact=True)
     pp.pprint(instance)
 
 
-################################################################################
 def _print_script(argv=None):
     """
     Prints summary of an information file
@@ -151,20 +146,21 @@ def _print_script(argv=None):
         "--type",
         choices=VALID_TYPES,
         default=None,
-        help="Forces information file type (overrides interpreting from filename)",
+        help="Forces information file type (overrides interpreting "
+             "from filename)",
     )
     parser.add_argument(
         "-f",
         "--format",
         choices=VALID_FORMATS,
         default=None,
-        help="Forces information file format (overrides interpreting from filename)",
+        help="Forces information file format (overrides interpreting "
+             "from filename)",
     )
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="increase output verbosiy"
     )
     args = parser.parse_args()
 
-    print_summary(
-        args.info_file, format=args.format, type=args.type, verbose=args.verbose
-    )
+    print_summary(args.info_file, format=args.format,
+                  type=args.type, verbose=args.verbose)

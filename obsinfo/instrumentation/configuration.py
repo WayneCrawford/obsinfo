@@ -81,7 +81,7 @@ class InstrumentationConfiguration(object):
                   'preamplifier_config']:
             if s in info_dict:
                 info_dict['base']['base_channel'][s] = info_dict[s]
-        
+
         # Set up short names for some variables
         SN_dl = info_dict.get('datalogger_serial_number', None)
         SN_pa = info_dict.get('preamplifier_serial_number', None)
@@ -105,7 +105,8 @@ class InstrumentationConfiguration(object):
         """
         # Global config and serial number
         if self.config:
-            assert self.config in self.inst_dict.get('configuration_definitions',[]),\
+            assert self.config in self.inst_dict.get(
+                    'configuration_definitions', []),\
                 f'Asked for non-existant configuration "{self.config}"'
             self.inst_dict.update(self.inst_dict['configuration_definitions']
                                   [self.config])
@@ -115,15 +116,15 @@ class InstrumentationConfiguration(object):
             # if self.serial_number in self.inst_dict.get(
             #     'serial_number_modifications', []):
             try:
-                modifier = self.inst_dict['serial_number_modifications']\
-                    [self.serial_number]
+                modifier = self.inst_dict['serial_number_modifications'][
+                    self.serial_number]
             except Exception:
                 mod_by_serial_number = False
             else:
                 mod_by_serial_number = True
                 if debug:
                     print('in configuration.InstrumentationConfiguration.'
-                           'to_Instrumentation()')
+                          'to_Instrumentation()')
                     print(f'Modifying for serial number: {self.serial_number}')
                     print('BEFORE')
                     pp.pprint(self.inst_dict)
@@ -158,7 +159,6 @@ class InstrumentationConfiguration(object):
         if debug and mod_by_serial_number:
             print('AFTER BASE CHANNEL SERIAL NUMBERS')
             pp.pprint(self.inst_dict)
-
 
         # Next, apply channel-specific modifications
         if self.channel_mods:

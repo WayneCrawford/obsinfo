@@ -7,7 +7,7 @@ Added/modified lines are marked "# WCC"
 """
 import functools
 import json
-import yaml # WCC
+import yaml  # WCC
 import operator
 import re
 import sys
@@ -44,13 +44,14 @@ try:
 except ImportError:
     requests = None
 
-from proxytypes import LazyProxy, Proxy
+from proxytypes import LazyProxy  # , Proxy
 
 __version__ = "0.2"
 
 
 class JsonRefError(Exception):
-    def __init__(self, message, reference, uri="", base_uri="", path=(), cause=None):
+    def __init__(self, message, reference, uri="", base_uri="", path=(),
+                 cause=None):
         self.message = message
         self.reference = reference
         self.uri = uri
@@ -185,11 +186,11 @@ class JsonRef(LazyProxy):
             try:
                 base_doc = self.loader(uri)
             except Exception as e:
-                # self._error("%s: %s" % (e.__class__.__name__, unicode(e)), cause=e)
+                # self._error("%s: %s" % (e.__class__.__name__, unicode(e)),
+                #             cause=e)
                 # WCC
                 print(e)
                 return None
-                
 
             kwargs = self._ref_kwargs
             kwargs["base_uri"] = uri
@@ -208,7 +209,7 @@ class JsonRef(LazyProxy):
         :argument str pointer: a json pointer URI fragment to resolve within it
 
         """
-        # Do only split at single forward slashes which are not prefixed by a caret
+        # Do only split at single forward slashes not prefixed by a caret
         parts = re.split(r"(?<!\^)/", unquote(pointer.lstrip("/"))) if pointer else []
 
         for part in parts:
@@ -321,12 +322,14 @@ class JsonLoader(object):
             try:
                 result = requests.get(uri).json(**kwargs)
             except TypeError:
-                warnings.warn("requests >=1.2 required for custom kwargs to json.loads")
+                warnings.warn("requests >=1.2 required for custom kwargs "
+                              "to json.loads")
                 result = requests.get(uri).json()
         else:
             # Otherwise, pass off to urllib and assume utf-8
-            # result = json.loads(urlopen(uri).read().decode("utf-8"), **kwargs)
-            result = _yaml_loads(urlopen(uri).read().decode("utf-8"), **kwargs) # WCC
+            # result = json.loads(urlopen(uri).read().decode("utf-8"),**kwargs)
+            result = _yaml_loads(urlopen(uri).read().decode("utf-8"),
+                                 **kwargs)  # WCC
 
         return result
 
@@ -352,7 +355,7 @@ def load(fp, base_uri="", loader=None, jsonschema=False, load_on_repr=True,
         loader = functools.partial(jsonloader, **kwargs)
 
     return JsonRef.replace_refs(
-        _yaml_load(fp, **kwargs), # WCC
+        _yaml_load(fp, **kwargs),  # WCC
         base_uri=base_uri,
         loader=loader,
         jsonschema=jsonschema,
@@ -360,15 +363,16 @@ def load(fp, base_uri="", loader=None, jsonschema=False, load_on_repr=True,
     )
 
 
-def loads(s, base_uri="", loader=None, jsonschema=False, load_on_repr=True, **kwargs):
+def loads(s, base_uri="", loader=None, jsonschema=False, load_on_repr=True,
+          **kwargs):
     """
     Drop in replacement for :func:`json.loads`, where JSON references are
     proxied to their referent data.
 
     :param s: String containing JSON document
     :param kwargs: This function takes any of the keyword arguments from
-        :meth:`JsonRef.replace_refs`. Any other keyword arguments will be passed to
-        :func:`json.loads`
+        :meth:`JsonRef.replace_refs`. Any other keyword arguments will be
+        passed to :func:`json.loads`
 
     """
     # print(f'yamlref.loads: base_uri={base_uri}')
@@ -384,7 +388,8 @@ def loads(s, base_uri="", loader=None, jsonschema=False, load_on_repr=True, **kw
     )
 
 
-def load_uri(uri, base_uri=None, loader=None, jsonschema=False, load_on_repr=True):
+def load_uri(uri, base_uri=None, loader=None, jsonschema=False,
+             load_on_repr=True):
     """
     Load JSON data from ``uri`` with JSON references proxied to their referent
     data.
@@ -408,44 +413,47 @@ def load_uri(uri, base_uri=None, loader=None, jsonschema=False, load_on_repr=Tru
         load_on_repr=load_on_repr,
     )
 
+
 # WCC ADDED BEGIN
 def _yaml_load(fp, **kwargs):
     """ Call {yaml,json}.load according to file type """
     try:
         return json.load(fp, **kwargs)
     # except JSONDecodeError:
-    except:
+    except Exception:
         fp.seek(0)
         try:
             return yaml.load(fp)
         # except ScannerError:
-        except:
+        except Exception:
             warnings.warn(f'file {fp.name} is neither JSON nor YAML')
     return None
+
 
 def _yaml_loads(s, **kwargs):
     """ Call {yaml,json}.loads according to file type """
     a = None
-    #print()
-    #print(s)
+    # print()
+    # print(s)
     if s[:3] == '---':
         try:
             a = yaml.load(s, **kwargs)
-        except:
+        except Exception:
             try:
                 a = json.loads(s, **kwargs)
-            except:
+            except Exception:
                 warnings.warn(f'string is neither JSON nor YAML:\n{s}')
     else:
         try:
             a = json.loads(s, **kwargs)
-        except:
+        except Exception:
             try:
                 a = yaml.load(s, **kwargs)
-            except:
+            except Exception:
                 warnings.warn('string is neither JSON nor YAML')
     return a
 # WCC ADDED END
+
 
 def dump(obj, fp, **kwargs):
     """

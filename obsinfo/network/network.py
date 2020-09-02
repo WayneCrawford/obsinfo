@@ -124,11 +124,11 @@ class Network(object):
         """
         if destination_folder is None:
             destination_folder = "."
-        if source == None:
+        if source is None:
             source = self.facility.full_name
-        
+
         inv = obspyInventory(networks=[self.to_obspy()], source=source)
-        fnames=[]
+        fnames = []
         if by_station:
             for station_code in [x.code for x in self.stations]:
                 fname = os.path.join(
@@ -147,6 +147,7 @@ class Network(object):
             inv.write(fname, "STATIONXML")
             fnames.append(fname)
         return fnames
+
 
 def make_stationXML_script(argv=None):
     """

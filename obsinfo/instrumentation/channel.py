@@ -12,7 +12,7 @@ import pprint
 import sys
 
 # Non-standard modules
-import obspy.core.util.obspy_types as obspy_types
+# import obspy.core.util.obspy_types as obspy_types
 # import obspy.core.inventory as obspy_inventory
 from obspy.core.inventory.channel import Channel as obspy_channel
 
@@ -131,7 +131,7 @@ class Channel(object):
         if 'preamplifier_config' in info_dict:
             info_dict['preamplifier']['configuration'] =\
                 info_dict['preamplifier_config']
-                
+
         obj = cls(Instrument.from_info_dict(
                     {'datalogger': info_dict['datalogger'],
                      'sensor': info_dict['sensor'],

@@ -17,7 +17,7 @@ class UpDict(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.propagate()    # Make all contained dicts and UserDicts UpDicts
-    
+
     def update(self, update_dict, allow_overwrite=True):
         """
         Update that only changes explicitly specfied fields
@@ -98,7 +98,6 @@ class UpDict(dict):
                         value = self.__class__(value)
                     self[key] = value
 
-
     def propagate(self):
         """
         Make all contained dictionaries UpDicts
@@ -107,7 +106,7 @@ class UpDict(dict):
             if isinstance(value,  (dict, UserDict)):
                 self[key] = self.__class__(value)
                 self[key].propagate()
-                
+
     def _purity_check(self):
         """
         Return true if all internal dicts are also UpDicts
@@ -119,35 +118,13 @@ class UpDict(dict):
                         return False
                 else:
                     return False
-        return True                
+        return True
 
 
 class InfoDict(UpDict):
     """
     UpDict subclass with specific obsinfo-savvy routines
-    """                
-#    def complete_das_channels(self):
-#        """
-#        Complete 'das_channels' using 'base_channel'.
-#
-#        Fields must be at the top level.
-#        'base_channel' is deleted
-#
-#        >>> A = InfoDict(base_channel={'a': 5, 'b':6},
-#                         das_channels={'1': {'a': 7}, '2': {'b':0}})
-#        >>> A.complete_das_channels()
-#        >>> A
-#        {'das_channels': {'1': {'a': 7, 'b': 6}, '2': {'a': 5, 'b': 0}}}
-#        """
-#        assert 'das_channels'  in self, f"No 'das_channels' key in {self.keys()}"
-#        assert 'base_channel' in self, f"No 'base_channel' key in {self.keys()}"
-#        for key, value in self['das_channels'].items():
-#            # print(f'"{key}"')
-#            temp = InfoDict(value)
-#            self['das_channels'][key] = InfoDict(self['base_channel'])
-#            self['das_channels'][key].update(temp)
-#        del self['base_channel']
-
+    """
     def update_by_config_SN(self, config=None, serial_number=None):
         """
         Update by configuration and/or serial number

@@ -6,7 +6,14 @@ import math as m
 import warnings
 
 # Non-standard modules
-# import obspy.core.inventory.response as obspy_response
+from obspy.core.inventory.response import (PolesZerosResponseStage,
+                                           FIRResponseStage,
+                                           CoefficientsTypeResponseStage,
+                                           ResponseListResponseStage,
+                                           ResponseListElement)
+import obspy.core.util.obspy_types as obspy_types
+
+# Local modules
 
 
 class Filter():
@@ -68,7 +75,7 @@ class PolesZeros(Filter):
     def _set_normalization_factor(self, given_factor):
         """
         Set the normalization factor based on what was input
-    
+
         :param given_factor: given normalization factor
         """
         warn_pct = 2
@@ -77,14 +84,14 @@ class PolesZeros(Filter):
             if given_factor:
                 if abs((self.normalization_factor - given_factor)
                        / given_factor) > warn_pct/100.:
-                    warning.warn('given normalization factor > '
-                                 '{:g}% different than calculated ({:g} vs {:g})'
-                                 .format(warn_pct, given_factor,
-                                         self.normalization_factor))
+                    warnings.warn('given normalization factor more than '
+                                  '{:g}% off from calculated ({:g} vs {:g})'
+                                  .format(warn_pct, given_factor,
+                                          self.normalization_factor))
         elif given_factor is None:
-            self.normalization_factor=1
+            self.normalization_factor = 1
         else:
-            self.normalization_factor=given_factor
+            self.normalization_factor = given_factor
 
     @classmethod
     def from_info_dict(cls, info_dict):
@@ -148,6 +155,29 @@ class PolesZeros(Filter):
         A0 = abs(A0)
         return A0
 
+    def to_obspy(self, **stage_kwargs):
+        """
+        create an obspy PolesZerosResponseStage
+
+        :param **stage_kwargs: stage-specfic keyword arguments: stage_gain,
+            stage_gain_frequency, input_units, output_units, name,
+            input_units_description, output_units_description, description,
+            decimation_input_sample_rate, decimation_factor,
+            decimation_offset, decimation_delay, decimation_correction
+        :kind **stage_kwargs: dict
+        """
+        return PolesZerosResponseStage(
+            **stage_kwargs,
+            pz_transfer_function_type=self.transfer_function_type,
+            normalization_frequency=self.normalization_frequency,
+            zeros=[obspy_types.ComplexWithUncertainties(
+                   t, lower_uncertainty=0.0, upper_uncertainty=0.0)
+                   for t in self.zeros],
+            poles=[obspy_types.ComplexWithUncertainties(
+                   t, lower_uncertainty=0.0, upper_uncertainty=0.0)
+                   for t in self.poles],
+            normalization_factor=self.calc_normalization_factor())
+
 
 class FIR(Filter):
     """
@@ -182,6 +212,24 @@ class FIR(Filter):
         s += f'{self.coefficients}, {self.coefficient_divisor})'
         return s
 
+    def to_obspy(self, **stage_kwargs):
+        """
+        create an obspy FIRResponseStage
+
+        :param **stage_kwargs: stage-specfic keyword arguments: stage_gain,
+            stage_gain_frequency, input_units, output_units, name,
+            input_units_description, output_units_description, description,
+            decimation_input_sample_rate, decimation_factor,
+            decimation_offset, decimation_delay, decimation_correction
+        :kind **stage_kwargs: dict
+        """
+        return FIRResponseStage(
+            **stage_kwargs,
+            symmetry=self.symmetry,
+            coefficients=[obspy_types.FloatWithUncertaintiesAndUnit(
+                c / self.coefficient_divisor)
+                          for c in self.coefficients])
+
 
 class Coefficients(Filter):
     """
@@ -214,6 +262,27 @@ class Coefficients(Filter):
         s += f'{self.denominator_coefficients})'
         return s
 
+    def to_obspy(self, **stage_kwargs):
+        """
+        create an obspy CoefficientsTypeResponseStage
+
+        :param **stage_kwargs: stage-specfic keyword arguments: stage_gain,
+            stage_gain_frequency, input_units, output_units, name,
+            input_units_description, output_units_description, description,
+            decimation_input_sample_rate, decimation_factor,
+            decimation_offset, decimation_delay, decimation_correction
+        :kind **stage_kwargs: dict
+        """
+        return CoefficientsTypeResponseStage(
+            **stage_kwargs,
+            cf_transfer_function_type=self.transfer_function_type,
+            numerator=[obspy_types.FloatWithUncertaintiesAndUnit(
+                n, lower_uncertainty=0.0, upper_uncertainty=0.0)
+                for n in self.numerator_coefficients],
+            denominator=[obspy_types.FloatWithUncertaintiesAndUnit(
+                n, lower_uncertainty=0.0, upper_uncertainty=0.0)
+                for n in self.denominator_coefficients])
+
 
 class ResponseList(Filter):
     """
@@ -227,7 +296,8 @@ class ResponseList(Filter):
         assert len(response_list) > 2,\
             'response_list must have at least two elements'
         for element in response_list:
-            assert len(element)==3, 'response_list element does not have 3 items'
+            assert len(element) == 3,\
+                'response_list element does not have 3 items'
         self.response_list = response_list
 
     @classmethod
@@ -241,6 +311,23 @@ class ResponseList(Filter):
     def __repr__(self):
         return f'ResponseList("{self.response_list}")'
 
+    def to_obspy(self, **stage_kwargs):
+        """
+        create an obspy ResponseListResponseStage
+
+        :param **stage_kwargs: stage-specfic keyword arguments: stage_gain,
+            stage_gain_frequency, input_units, output_units, name,
+            input_units_description, output_units_description, description,
+            decimation_input_sample_rate, decimation_factor,
+            decimation_offset, decimation_delay, decimation_correction
+        :kind **stage_kwargs: dict
+        """
+        response_list_elements = [ResponseListElement(x[0], x[1], x[2])
+                                  for x in self.response_list]
+        return ResponseListResponseStage(
+            **stage_kwargs,
+            response_list_elements=response_list_elements)
+
 
 class Analog(PolesZeros):
     """
@@ -248,7 +335,7 @@ class Analog(PolesZeros):
     """
     def __init__(self):
         # self.type = 'Analog'
-        self.transfer_function_type='LAPLACE (RADIANS/SECOND)'
+        self.transfer_function_type = 'LAPLACE (RADIANS/SECOND)'
         self.units = 'rad/s'
         self.poles = []
         self.zeros = []

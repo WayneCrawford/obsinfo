@@ -73,8 +73,9 @@ class Instrumentation(object):
         if 'das_channel' contains a complete sensor, preamplifier or
             datalogger (signified by 'equipment', 'configuration' and
             'configuration_definition' fields) then base_channel 'equipment',
-            'configuration', 'serial_number_modifications', 'configuration_definitions' 
-            and '{component}_config' are not copied over
+            'configuration', 'serial_number_modifications',
+            'configuration_definitions' and '{component}_config' are not
+            copied over
         """
         assert 'das_channels' in info_dict,\
             f"No 'das_channels' key in {info_dict.keys()}"
@@ -94,11 +95,11 @@ class Instrumentation(object):
     def _clean_base_attributes(base_channel, das_channel):
         """
         Removes base_channel keys that conflict with das_channel
-        
+
         If a das_channel component has "equipment", "configuration" and
         "configuration_definitions" keys, removes those keys plus
-        "serial_number_modification" and "{component}_config" from the equivalent
-        base_channel component
+        "serial_number_modification" and "{component}_config" from the
+        equivalent base_channel component
 
         :param base_channel: base channel definition
         :type base_channel: InfoDict
