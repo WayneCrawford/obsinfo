@@ -39,13 +39,13 @@ campaign:
                 title: "M1 local earthquake"
                 datetime: "2015-09-10T14:00:00Z"
                 duration.s: 300
-                source_position: [358.250, -16.701, 36.4]
+                source_position: {lon: 358.250, lat: -16.701, depth.km: 36.4}
             -
                 title: "M5 regional earthquake"
                 datetime: "2015-10-10T14:00:00Z"
                 duration.s: 600
             -
-                title: "M7 teleseism"
+                title: "M7 Iran teleseism"
                 datetime: "2015-11-10T14:00:00Z"
                 duration.min: 60
     expeditions:
