@@ -11,7 +11,7 @@ revision:
             first_name: "Wayne"
             last_name: "Crawford"
 campaign:
-    reference_name: "MYCAMPAIGN"
+    reference_name: "EMSO-MOMAR"
     reference_scientist:
         first_name: "Ima"
         last_name: "Genie"
@@ -38,18 +38,21 @@ campaign:
         waveform_windows:
             # Specify 1-3 time intervals during the campaign for plotting
             -
-                title: "M1 local earthquake"
-                datetime: "2015-09-10T14:00:00Z"
-                duration.s: 300
-                source_position: [358.250, -16.701, 36.4]
+                title: "M0.5 local earthquake"
+                datetime: "2015-08-17T19:57:14"
+                duration.s: 13
+                source_position: {lat: 37.292, lon: -37.292, depth: 2.1}
             -
-                title: "M5 regional earthquake"
-                datetime: "2015-10-10T14:00:00Z"
-                duration.s: 600
+                title: "M4.4 Acores (W)"
+                datetime: "2015-10-23T02:45:45"
+                source_position: {lat: 38.731, lon: -34.694, depth: 10.0}
+                duration.min: 4
             -
-                title: "M7 teleseism"
-                datetime: "2015-11-10T14:00:00Z"
-                duration.min: 60
+                title: "M7.8 Muisne, Ecuador"
+                datetime: "2016-04-16T23:58:36Z"
+                source_position: {lat: 0.382, lon: -79.922, depth: 20.6}
+                offset.min: 5
+                duration.min: 10
     expeditions:
         -
             name: ~

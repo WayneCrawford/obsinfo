@@ -20,7 +20,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=[
           'obspy>=1.1',
-          'pyyaml>=3.0',
+          'pyyaml>=3.0,<4',
           'jsonschema>=2.6',
           'jsonref>=0.2'
       ],
