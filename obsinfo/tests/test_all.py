@@ -461,7 +461,7 @@ class TestADDONSMethods(unittest.TestCase):
             self.infofiles_path,
             "instrumentation",
             "sensors",
-            "NANOMETRICS_T240_SINGLESIDED.sensor.yaml"))
+            "NANOMETRICS_T240_.sensor.yaml"))
         obj = InstrumentComponent.from_info_dict(A)
         obj = InstrumentComponent.from_info_dict(A['sensor'])
         obj = Sensor.from_info_dict(A['sensor'])

@@ -17,7 +17,7 @@ instrumentation:
         datalogger: {$ref: "dataloggers/LC2000.datalogger.yaml#datalogger"}
         preamplifier:  {$ref: "preamplifiers/LCHEAPO_BBOBS.preamplifier.yaml#preamplifier"}
         preamplifier_config: "0.225x"
-        sensor: {$ref: "sensors/NANOMETRICS_T240_SINGLESIDED.sensor.yaml#sensor"}
+        sensor: {$ref: "sensors/NANOMETRICS_T240_.sensor.yaml#sensor"}
     das_channels:
         "1": {orientation_code: "2"}
         "2": {orientation_code: "1"}

@@ -1,0 +1,31 @@
+---
+format_version: "0.107"
+revision: 
+    date: "2017-11-30"
+    authors: 
+        - {$ref: "../../authors/Wayne_Crawford.author.yaml#author"}
+sensor:
+    equipment:
+        model: "Trillium T240"
+        type: "Broadband seismometer"
+        description: "Trillium T240 seismometer"
+        manufacturer: "Nanometrics, Inc"
+        vendor: "Nanometrics, Inc"
+    configuration: "SINGLE-SIDED_SN1-399"
+    configuration_definitions:
+        "SINGLE-SIDED_SN1-399":
+            description: "negative shorted to ground, serial numbers 1-399"
+            seed_codes:
+                $ref: "BHZ12.seed_codes.yaml#seed_codes"
+            response_stages:
+                - $ref: "responses/Trillium_T240_SN1-399-singlesided_theoretical.stage.yaml#stage"
+        "SINGLE-SIDED_SN400plus":
+            description: "negative shorted to ground, serial numbers 400+"
+            seed_codes:
+                $ref: "BHZ12.seed_codes.yaml#seed_codes"
+            response_stages:
+                - $ref: "responses/Trillium_T240_SN400-singlesided_theoretical.stage.yaml#stage"
+    notes:
+        - "INSU-IPGP OBS park sphere-sensor pairs are: Sphere01-133, Sphere02-132"
+        - "Sphere03-134, Sphere04-138, Sphere05-137, Sphere06-830, Sphere07-136"
+        - "Sphere08-829, Sphere09-826"
