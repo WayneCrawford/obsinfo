@@ -103,10 +103,10 @@
         "waveform_window": {  
             "type":"object",
             "description": "waveform window to plot (SHOULD REQUIRE EITHER duration.s or duration.m, but I don't know how)",
-            "required": ["title","datetime"],
+            "required": ["title", "starttime"],
             "properties":{
                 "title": {"type":"string"},
-                "datetime": {
+                "starttime": {
                     "description":"start of plot window" ,
                     "type":"string",
                     "format":"date-time"
@@ -126,7 +126,7 @@
                     "properties": {
                         "lat": {"type": "number", "description": "longitude"},
                         "lon": {"type": "number", "description": "latitude"},
-                        "depth": {"type": "number", "description": "depth (km)"}
+                        "depth.km": {"type": "number", "description": "depth (km)"}
                     },
                     "additionalProperties" : false
                 }

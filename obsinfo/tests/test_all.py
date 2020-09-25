@@ -611,6 +611,15 @@ class TestADDONSMethods(unittest.TestCase):
                                             "*.station.yaml")):
             self.assertTrue(validate(fname, quiet=True))
 
+    def test_validate_campaign(self):
+        """
+        Test validate campaign files
+        """
+        for fname in glob.glob(os.path.join(self.infofiles_path,
+                                            "campaign",
+                                            "*.campaign.yaml")):
+            self.assertTrue(validate(fname, quiet=True))
+
 
 def suite():
     return unittest.makeSuite(TestADDONSMethods, 'test')
