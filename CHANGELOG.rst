@@ -52,6 +52,7 @@ v0.106.4: changed "ls" to "command ls" in process scripts, avoids problems with
           aliased versions of ls
 v0.106.4.2: fix bug where schema file pathnames are incorrectly parsed on Windows,
            and fix some ObsPyDepreciationErrors
+v0.106.5: fixed some StationXML creation inconsistencies and added network Operator
 
 v0.105
 ------

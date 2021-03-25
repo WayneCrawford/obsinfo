@@ -32,7 +32,7 @@ revision:
 network:
     facility:
         reference_name: "INSU-IPGP"
-        full_name: "INSU-IPGP OBS Park"
+        full_name: "INSU-IPGP OBS facility"
     campaign_reference_name: "MYCAMPAIGN"
     general_information:
         code: "4G"

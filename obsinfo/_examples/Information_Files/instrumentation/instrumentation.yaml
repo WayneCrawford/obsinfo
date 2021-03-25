@@ -29,8 +29,8 @@ instrumentation:
     facility:
         reference_name: "INSU-IPGP"
         full_name: "INSU-IPGP OBS facility"
-        email: "obs@ipgp.fr"
-        website: "http://parc-obs.insu.cnrs.fr"
+        email: "parc-obs@services.cnrs.fr"
+        website: "https://parc-obs.insu.cnrs.fr"
     instrument_components: 
         $ref: "instrument_components.yaml"
     instruments:

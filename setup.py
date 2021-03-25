@@ -20,7 +20,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=[
           'obspy>=1.1',
-          'pyyaml>=3.0,<4',
+          'pyyaml>=5.0',
           'jsonschema>=2.6',
           'jsonref>=0.2'
       ],
@@ -28,7 +28,7 @@ setuptools.setup(
         'console_scripts': [
             'obsinfo-validate=obsinfo.misc.info_files:_validate_script',
             'obsinfo-print=obsinfo.misc.print:_print_script',
-            'obsinfo-makeSTATIONXML=obsinfo.network.network:_make_stationXML_script',
+            'obsinfo-makeSTATIONXML=obsinfo.network:_make_stationXML_script',
             'obsinfo-make_SDPCHAIN_scripts=obsinfo.addons.SDPCHAIN:_console_script',
             'obsinfo-make_LCHEAPO_scripts=obsinfo.addons.LCHEAPO:_console_script'
         ]

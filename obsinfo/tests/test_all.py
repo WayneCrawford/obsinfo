@@ -42,12 +42,14 @@ class TestADDONSMethods(unittest.TestCase):
             # excluded elements
             excludes = ["Created", "Module"]
             excludes_attributes = []
-            # excludes_attributes = ["startDate", "endDate"]
+            # The following is temporary, until obspy decides whether it
+            # will go back to short dates for the Network field
+            excludes_attributes = ["startDate", "endDate"]
             excludes = [compare.add_ns(x) for x in excludes]
 
             for stxml in glob.glob("*.xml"):
                 xml1 = ET.parse(stxml)
-                xml2 = ET.parse(os.path.join(self.testing_path, 'outputs', 
+                xml2 = ET.parse(os.path.join(self.testing_path, 'STATIONXML', 
                                              stxml))
                 self.assertTrue(compare.xml_compare(
                     compare.getroot(xml1), compare.getroot(xml2),

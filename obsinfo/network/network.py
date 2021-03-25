@@ -14,6 +14,7 @@ import os.path
 
 # Non-standard modules
 import obspy.core.inventory as obspy_inventory
+from obspy.core.inventory.util import Operator
 import yaml
 # import obspy.core.inventory.util as obspy_util
 # from obspy.core.utcdatetime import UTCDateTime
@@ -109,6 +110,10 @@ class network:
         comments = None
         if temp:
             comments = create_comments(temp)
+        
+        # Create Operator
+        my_op = Operator(self.facility_full_name, None,None)
+        
         my_net = obspy_inventory.network.Network(
             self.network_info.code,
             obspy_stations,
@@ -116,6 +121,7 @@ class network:
             comments=comments,
             start_date=self.network_info.start_date,
             end_date=self.network_info.end_date,
+            operators=[my_op]
         )
         return my_net
 
