@@ -2,17 +2,18 @@ import setuptools
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()
-    
-version={}
+
+version = {}
 with open("obsinfo/version.py") as fp:
-    exec(fp.read(),version)
+    exec(fp.read(), version)
 
 setuptools.setup(
     name="obsinfo",
     version=version['__version__'],
     author="Wayne Crawford",
     author_email="crawford@ipgp.fr",
-    description="Tools for documenting ocean bottom seismometer experiments and creating meta/data",
+    description="Tools for documenting ocean bottom seismometer experiments "
+                "and creating meta/data",
     long_description=long_description,
     long_description_content_type="text/x-rst; charset=UTF-8",
     url="https://github.com/WayneCrawford/obsinfo",
@@ -29,8 +30,9 @@ setuptools.setup(
             'obsinfo-validate=obsinfo.misc.info_files:_validate_script',
             'obsinfo-print=obsinfo.misc.print:_print_script',
             'obsinfo-makeSTATIONXML=obsinfo.network:_make_stationXML_script',
-            'obsinfo-make_SDPCHAIN_scripts=obsinfo.addons.SDPCHAIN:_console_script',
-            'obsinfo-make_LCHEAPO_scripts=obsinfo.addons.LCHEAPO:_console_script'
+            'obsinfo-makescripts_SDPCHAIN=obsinfo.addons.SDPCHAIN:_console_script',
+            'obsinfo-makescripts_LCHEAPO=obsinfo.addons.LCHEAPO:_console_script',
+            'obsinfo-makescripts_LC2SDS=obsinfo.addons.LC2SDS:_console_script'
         ]
     },
     python_requires='>=3',

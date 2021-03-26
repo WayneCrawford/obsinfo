@@ -53,6 +53,9 @@ v0.106.4: changed "ls" to "command ls" in process scripts, avoids problems with
 v0.106.4.2: fix bug where schema file pathnames are incorrectly parsed on Windows,
            and fix some ObsPyDepreciationErrors
 v0.106.5: fixed some StationXML creation inconsistencies and added network Operator
+          updated pyyaml version to 5+ (3. was incompatible with python 3.9).
+          Add obsinfo-process_LCHEAPO_INSUIPGP (long name for a simplified
+          process for shipboard data creation)
 
 v0.105
 ------
