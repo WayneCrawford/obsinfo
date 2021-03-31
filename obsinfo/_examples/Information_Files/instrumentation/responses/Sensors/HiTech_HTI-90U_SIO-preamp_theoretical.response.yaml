@@ -19,7 +19,3 @@ notes:
     - "Current-mode preamplifier, 0.05-2500 Hz"
     - "Hydrophone+preamp response measured from 250-1000 Hz: avg -182.4"
     - "statement that -2.5 dB more at 3000 m depth => -184.9 ref 1V/uPa at 3000 m depth = 5.7e-4 V/Pa"
-    - "Preamp response measured from .05-7500 Hz:"
-    - "    0.05 Hz      1 Hz         10-1000 Hz           7500 Hz"
-    - "    -4.7dB      +.28dB          flat              -2.9dB"
-    - "     x0.58,     x1.03,                             x0.72"
