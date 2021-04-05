@@ -86,9 +86,12 @@ The following command-line executables perform useful tasks:
 
 The following command-line executables make scripts to run specific data conversion software:
 
-- ``obsinfo-make_LCHEAPO_scripts``: Makes scripts to convert LCHEAPO data to miniSEED
-- ``obsinfo-make_SDPCHAIN_scripts``: Makes scripts to drift correct miniSEED data and package
-  them for FDSN-compatible data centers
+- ``obsinfo-makescripts_LCHEAPO``: Makes scripts to convert LCHEAPO data to
+  miniSEED
+- ``obsinfo-makescripts_SDPCHAIN``: Makes scripts to drift correct miniSEED
+  data and package them for FDSN-compatible data centers
+- ``obsinfo-makescripts_LC2SDS``: Makes scripts to create quick-and-dirty
+  drift-corrected SDS archives from ``LCHEAPO *.raw.lch`` files
 
 Other subdirectories
 ======================
