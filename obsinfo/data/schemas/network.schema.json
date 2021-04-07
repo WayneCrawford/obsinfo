@@ -116,10 +116,11 @@
             "description": "other information",
             "items" : {
                 "type" : "object",
-                "description" : "other informations that will be appear as comments ",
-                "patternProperties": {
-                    "^[A-Za-z0-9_-]+$": {"type" : "object"}
-                }
+                "description" : "processing steps",
+                "properties": {
+                    "clock_corrections": {"$ref": "#/definitions/clock_corrections"}
+                },
+                "additionalProperties": false
             }
         },
         "location_specification": {
@@ -158,9 +159,9 @@
                 }
             ]
         },
-        "clock_correction" : {
+        "clock_corrections" : {
             "type" : "object",
-            "description" : "clock_correction",
+            "description" : "clock_corrections",
             "required" : ["linear_drift"],
             "properties" : {
                 "linear_drift" : {"$ref" : "#/definitions/clock_correction_linear"},
@@ -188,10 +189,10 @@
             "properties" : {
                 "time_base" :             {"type" : "string","description" : "time base used in OBS"},
                 "reference" :             {"$ref" : "#/definitions/synchronization_reference"},
-                "start_sync_reference" :  {"$ref" : "definitions.schema.json#/date-time-Z" },
-                "start_sync_instrument" : {"$ref" : "#/definitions/start_sync_instrument" },
-                "end_sync_reference" :    {"$ref" : "definitions.schema.json#/date-time-Z" },
-                "end_sync_instrument" :   {"$ref" : "definitions.schema.json#/date-time-Z" }
+                "start_sync_reference" :  {"$ref" : "definitions.schema.json#/date-time-Z"},
+                "start_sync_instrument" : {"$ref" : "#/definitions/start_sync_instrument"},
+                "end_sync_reference" :    {"$ref" : "definitions.schema.json#/date-time-Z"},
+                "end_sync_instrument" :   {"$ref" : "definitions.schema.json#/date-time-Z"}
             }
         },
         "clock_correction_leapseconds" : {
