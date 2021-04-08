@@ -86,31 +86,33 @@ def __lc2sds_commands(station, in_fnames="*.fix.lch"):
     s += SMALL_SEPARATOR
     s += 'in_dir=$out_dir\n'
     s += 'out_dir=$OUTPUT_DIR\n'
-    start_sync_ref, start_sync_inst, end_sync_ref, end_sync_inst =\
-        _get_lin_corr(station)
-    s += f'START_REFR="{start_sync_ref}"\n'
-    s += f'START_INST="{start_sync_inst}"\n'
-    s += f'END_REFR="{end_sync_ref}"\n'
-    s += f'END_INST="{end_sync_inst}"\n'
+    ss_ref, ss_inst, es_ref, es_inst = _get_lin_corr(station.processing)
+    leapsecond_str = _get_leapsecond_string(station.processing)
+    s += f'START_REFR="{ss_ref}"\n'
+    s += f'START_INST="{ss_inst}"\n'
+    s += f'END_REFR="{es_ref}"\n'
+    s += f'END_INST="{es_inst}"\n'
 
     s += f"lc2SDS_weak '*.fix.lch' -i $in_dir -o $out_dir --network '{net}' "
     s += f"--station '{sta}' -t '{obs_type}' "
-    s += "-s $START_REFR $START_INST -e $END_REFR $END_INST\n"
+    s += "-s $START_REFR $START_INST -e $END_REFR $END_INST"
+    if len(leapsecond_str) > 0:
+        s += f" {leapsecond_str}"
+    s += "\n"
 
     return s
 
 
-def _get_lin_corr(station):
+def _get_lin_corr(processing):
     """
     Return linear correction parameters as strs
+    :param processing: station processing dict
     """
     clock_corrected = False
-    for proc in station.processing:
+    for proc in processing:
         if "clock_corrections" in proc:
             if clock_corrected:
                 NameError("CAN'T HANDLE MORE THAN ONE CLOCK CORRECTION")
-            if "leapseconds" in proc["clock_corrections"]:
-                NameError("No leap-second correction yet")
             lin_corr = proc['clock_corrections']['linear_drift']
             clock_corrected = True
     start_sync_ref = str(lin_corr["start_sync_reference"]).rstrip("Z")
@@ -120,6 +122,26 @@ def _get_lin_corr(station):
     if start_sync_inst == "0":
         start_sync_inst = ""
     return start_sync_ref, start_sync_inst, end_sync_ref, end_sync_inst
+
+
+def _get_leapsecond_string(processing):
+    """
+    Return leapsecond correction string
+    :param processing: station processing dict
+    """
+    my_str = ''
+    ls_times=[]
+    ls_types=[]
+    for proc in processing:
+        if "clock_corrections" in proc:
+            if "leapseconds" in proc["clock_corrections"]:
+                for ls in proc["clock_corrections"]["leapseconds"]:
+                    ls_times.append(ls['time'])
+                    ls_types.append(ls['type'])
+    if len(ls_times) > 0:
+        my_str = '--leapsecond_times {} --leapsecond_types "{}"'.format(
+            " ".join(['"' + t + '"' for t in ls_times]), "".join(ls_types))
+    return my_str
 
 
 def _console_script(argv=None):

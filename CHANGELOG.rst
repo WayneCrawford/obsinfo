@@ -57,6 +57,7 @@ v0.106.5: fixed some StationXML creation inconsistencies and added network Opera
           Add obsinfo-makescripts_LC2SDS (simplified process for shipboard data
           creation using only Python/OBSPy codes: NOT FOR FINAL DATA
           DELIVERY)
+v0.106.6: obsinfo-makescripts_LC2SDS now handles leapseconds
 
 v0.105
 ------
